@@ -38,8 +38,8 @@ function ReleaseCreator(withVersion) {
 
     return simpleGit
       .pull((error) => { if (error) { console.log(error); } })
-      .then(() => { console.log(`Pull ${branchName || 'current branch'} done.`); })
-      .then(() => {
+      .exec(() => { console.log(`Pull ${branchName || 'current branch'} done.`); })
+      .exec(() => {
         if (withVersion) {
           fs.writeFileSync('package.json', newVersionFile);
         }
@@ -48,36 +48,37 @@ function ReleaseCreator(withVersion) {
       .add(['CHANGELOG.md', 'package.json'])
       .commit(commitMessage)
       .push()
-      .then(() => { console.log(`Commit Release on ${branchName || 'current branch'} done.`); });
+      .exec(() => { console.log(`Commit Release on ${branchName || 'current branch'} done.`); });
   }
 
   const addTagToGit = (tag, branchName) =>
     simpleGit
       .addTag(tag)
       .push('origin', tag)
-      .then(() => { console.log(`Tag ${tag} on ${branchName || 'currentBranch'} done.`); });
+      .exec(() => { console.log(`Tag ${tag} on ${branchName || 'currentBranch'} done.`); });
 
   const mergeDevelOntoMaster = () =>
     simpleGit
       .checkout(BRANCH_MASTER)
       .pull((error) => { if (error) { console.log(error); } })
-      .then(() => { console.log(`Pull ${BRANCH_MASTER} done.`); })
+      .exec(() => { console.log(`Pull ${BRANCH_MASTER} done.`); })
       .mergeFromTo(BRANCH_DEVEL, BRANCH_MASTER)
-      .then(() => { console.log(`Merge ${BRANCH_DEVEL} on ${BRANCH_MASTER} done.`); })
+      .exec(() => { console.log(`Merge ${BRANCH_DEVEL} on ${BRANCH_MASTER} done.`); })
       .push();
 
   this.perform = () => {
     let releaseType = 'patch';
     let prereleaseTag;
     let newVersionFile;
+    let version;
 
     if (withVersion) {
-      ({ releaseType, prereleaseTag }) = parseCommandLineArguments();
+      ({ releaseType, prereleaseTag } = parseCommandLineArguments());
 
       // VERSION
       const packageContents = fs.readFileSync('./package.json', 'utf8');
       const package = JSON.parse(packageContents);
-      let version = versionFile[3].match(/\w*"version": "(.*)",/)[1];
+      version = versionFile[3].match(/\w*"version": "(.*)",/)[1];
       version = semver.inc(version, releaseType, prereleaseTag);
       package.version = version;
       newVersionFile = JSON.stringify(package, null, 2);
@@ -91,23 +92,24 @@ function ReleaseCreator(withVersion) {
     const newChanges = changes.join('\n');
 
     const commitMessage = withVersion ? `Release ${version}` : `Release - ${today}`;
-    const tag = `v${version}`;
+    const tag = version ? `v${version}` : null;
 
     return new Promise((resolve) => {
       simpleGit.status((_, statusSummary) => {
         const currentBranch = statusSummary.current;
 
         let promise;
-        if (prereleaseTag || /v\d+(\.\d+)?/.test(currentBranch)) {
+        if (prereleaseTag || /v\d+(\.\d+)?/i.test(currentBranch)) {
           promise = pullAndCommitChanges(newVersionFile, newChanges, commitMessage, currentBranch)
-            .then(() => addTagToGit(tag, currentBranch))
-            .addTag();
+            .then(() => addTagToGit(tag, currentBranch));
         } else {
           promise = pullAndCommitChanges(newVersionFile, newChanges, commitMessage, BRANCH_DEVEL)
             .then(() => mergeDevelOntoMaster())
-            .then(() => addTagToGit(tag, BRANCH_MASTER))
-            .checkout(BRANCH_DEVEL);
+            .then(() => withVersion ? addTagToGit(tag, BRANCH_MASTER) : simpleGit)
+            .then(() => simpleGit.checkout(BRANCH_DEVEL));
         }
+
+        promise.catch(error => console.error(error));
 
         resolve(promise);
       });
