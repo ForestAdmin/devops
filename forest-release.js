@@ -2,11 +2,13 @@
 require('dotenv').config();
 // require('colors');
 
-const ReleaseNotCreator = require('./services/release-note-creator');
+const ReleaseCreator = require('./services/release-creator');
+const ReleaseNoteCreator = require('./services/release-note-creator');
 
-const token = 'xoxp-739448158113-734385507331-745847314480-0726c291d9afa0e376410f8d976e6ef0';
+const token = 'xoxp-739448158113-734385507331-746036946085-5e8413d7e6327739bd0a6c0c2502d1b5';
 
 module.exports = (releaseIcon, withVersion) => {
-  return new ReleaseNotCreator(token, releaseIcon, withVersion)
-    .perform();
+  return new ReleaseCreator(withVersion)
+    .perform()
+    .then(() => new ReleaseNoteCreator(token, releaseIcon, withVersion).perform());
 };

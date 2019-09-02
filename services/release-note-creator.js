@@ -2,7 +2,7 @@ const { WebClient } = require('@slack/client');
 const fs = require('fs');
 
 function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
-  this.channel = 'CMXARTWR2';
+  this.channel = 'CMLBBF6Q3';
 
   function extractLastVersionData(data) {
     const versionLineRegex = /## RELEASE (\d+.\d+.\d+(\-\w+\.\d+)? )?- .*/;
@@ -62,10 +62,11 @@ function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
     web.files.upload({
       channels: this.channel,
       content,
-      filename: `${title}.md`,
+      filename: `${title}12.md`,
       filetype: 'post',
     })
-      .then(() => {
+      .then((res) => {
+        console.log(res);
         console.log('📮 Release note posted to Slack');
       })
       .catch((error) => {
