@@ -1,0 +1,31 @@
+{
+  "name": "@forestadmin/automatic-release-note",
+  "version": "0.1.0",
+  "description": "",
+  "main": "forest-release.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "forest-release": "forest-release.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ForestAdmin/automatic-release-note.git"
+  },
+  "keywords": [
+    "release"
+  ],
+  "author": "vincentm@forestadmin.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ForestAdmin/automatic-release-note/issues"
+  },
+  "homepage": "https://github.com/ForestAdmin/automatic-release-note#readme",
+  "dependencies": {
+    "@slack/client": "^5.0.2",
+    "commander": "^3.0.1",
+    "dotenv": "^8.1.0"
+  },
+  "devDependencies": {}
+}
