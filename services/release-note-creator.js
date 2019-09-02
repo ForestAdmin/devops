@@ -36,7 +36,7 @@ function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
     const { title, data: lastVersionData } = extractLastVersionData(data);
 
     const suffixTitle = title.substring(title.indexOf(' - '))
-      .replace(' - ', ` ${releaseIcon} `);
+      .replace(' - ', `${releaseIcon} `);
     const titleBetter = `RELEASE ${suffixTitle}`;
     let body = lastVersionData
       .join('\n')
