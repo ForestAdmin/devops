@@ -4,10 +4,10 @@ require('dotenv').config();
 const ReleaseCreator = require('./services/release-creator');
 const ReleaseNoteCreator = require('./services/release-note-creator');
 
-const token = process.env.SLACK_TOKEN;
-
-module.exports = (releaseIcon, withVersion) => {
-  return new ReleaseCreator(withVersion)
-    .perform()
-    .then(() => new ReleaseNoteCreator(token, releaseIcon, withVersion).perform());
+module.exports = {
+  release(slackToken, releaseIcon, withVersion) {
+    return new ReleaseCreator(withVersion)
+      .perform()
+      .then(() => new ReleaseNoteCreator(slackToken, releaseIcon, withVersion).perform());
+  },
 };

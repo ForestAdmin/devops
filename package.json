@@ -21,12 +21,11 @@
   },
   "homepage": "https://github.com/ForestAdmin/automatic-release-note#readme",
   "dependencies": {
-    "@slack/client": "^5.0.2",
-    "commander": "^3.0.1",
-    "dotenv": "^8.1.0",
-    "moment": "^2.24.0",
-    "semver": "^6.3.0",
-    "simple-git": "^1.126.0"
+    "@slack/client": "5.0.2",
+    "dotenv": "8.1.0",
+    "moment": "2.24.0",
+    "semver": "6.3.0",
+    "simple-git": "1.126.0"
   },
   "devDependencies": {
     "chai": "4.2.0",
