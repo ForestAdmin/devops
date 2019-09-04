@@ -1,10 +1,13 @@
 const { WebClient } = require('@slack/client');
 const fs = require('fs');
+const chalk = require('chalk');
+const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
 
 const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(\-\w+\.\d+)? )?- .*$/;
 
-function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
-  this.channel = 'CMLBBF6Q3';
+function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
+  const channel = options.channel || 'CMLBBF6Q3';
+  const { withVersion } = options;
 
   function isChange(data) {
     return !VERSION_LINE_REGEX.test(data[0]) && data.length;
@@ -44,8 +47,8 @@ function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
     return { title, changes };
   }
 
-  function extractHeadOfChangelog(releaseIcon) {
-    const data = fs.readFileSync('./CHANGELOG.md').toString().split('\n');
+  function extractReleaseChanges(releaseIcon) {
+    const data = getLinesOfChangelog();
     const { title, changes } = extractLastVersionData(data);
 
     const suffixTitle = title.substring(title.indexOf(' - '))
@@ -53,14 +56,13 @@ function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
     const titleBetter = `RELEASE ${suffixTitle}`;
     let body = changes
       .join('\n')
-      .replace('### Added', '# ⭐ Added')
-      .replace('### Changed', '# 🍿 Changed')
-      .replace('### Fixed', '# 💉 Fixed');
+      .replace('### Added', '## ⭐ Added')
+      .replace('### Changed', '## 🍿 Changed')
+      .replace('### Fixed', '## 💉 Fixed');
 
     if (withVersion) {
-      const packageContents = fs.readFileSync('./package.json', 'utf8');
-      const package = JSON.parse(packageContents);
-      body = `# ${package.name} ${package.version}\n\n${body}`
+      const package = getPackageJson();
+      body = `# ${package.name} v${package.version}\n\n${body}`
     }
 
     return { title: titleBetter, body };
@@ -69,30 +71,25 @@ function ReleaseNoteCreator(slackToken, releaseIcon, withVersion = false) {
   function postReleaseNote(title, content) {
     const web = new WebClient(slackToken);
 
-    console.log('title: ', title);
-    console.log('content: \n', content);
-
     web.files.upload({
-      channels: this.channel,
+      channels: channel,
       content,
       filename: `${title}12.md`,
       filetype: 'post',
     })
-      .then((res) => {
-        console.log(res);
-        console.log('📮 Release note posted to Slack');
+      .then(() => {
+        console.log(chalk.green('📮 Release note posted to Slack'));
       })
       .catch((error) => {
-        console.log('Cannot upload the release note. Be sure to have the `SLACK_DEV_TOKEN` in your `.env`.'.yellow);
-        console.log('To generate a token, go here: https://api.slack.com/custom-integrations/legacy-tokens\n'.yellow);
-        console.log('Original error:'.yellow);
-        console.log(error);
+        console.log(chalk.red(`Cannot upload the release note. Be sure to pass a correct slackToken, current token is: ${slackToken}.`));
+        console.log(chalk.red('To generate a token, go here: https://api.slack.com/custom-integrations/legacy-tokens\n'));
+        console.log(chalk.red('Original error:'));
+        console.error(error);
       });
   }
 
-
   this.perform = () => {
-    const { title, body } = extractHeadOfChangelog(releaseIcon);
+    const { title, body } = extractReleaseChanges(releaseIcon);
     postReleaseNote(title, body);
   };
 }

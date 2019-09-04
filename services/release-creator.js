@@ -2,13 +2,16 @@ const moment = require('moment');
 const fs = require('fs');
 const simpleGit = require('simple-git')();
 const semver = require('semver');
+const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
 
 const BRANCH_MASTER = 'master';
 const BRANCH_DEVEL = 'devel';
 const PRERELEASE_OPTIONS = ['premajor', 'preminor', 'prepatch', 'prerelease'];
 const RELEASE_OPTIONS = ['major', 'minor', 'patch', ...PRERELEASE_OPTIONS];
 
-function ReleaseCreator(withVersion) {
+function ReleaseCreator(options) {
+  const { withVersion } = options;
+
   const parseCommandLineArguments = () => {
     let releaseType = 'patch';
     let prereleaseTag;
@@ -76,16 +79,14 @@ function ReleaseCreator(withVersion) {
       ({ releaseType, prereleaseTag } = parseCommandLineArguments());
 
       // VERSION
-      const packageContents = fs.readFileSync('./package.json', 'utf8');
-      const package = JSON.parse(packageContents);
-      version = versionFile[3].match(/\w*"version": "(.*)",/)[1];
-      version = semver.inc(version, releaseType, prereleaseTag);
+      const package = getPackageJson();
+      version = semver.inc(package.version, releaseType, prereleaseTag);
       package.version = version;
       newVersionFile = JSON.stringify(package, null, 2);
     }
 
     // CHANGELOG
-    const changes = fs.readFileSync('CHANGELOG.md').toString().split('\n');
+    const changes = getLinesOfChangelog();
     const today = moment().format('YYYY-MM-DD');
 
     changes.splice(3, 0, `\n## RELEASE ${withVersion ? `${version} ` : ''}- ${today}`);

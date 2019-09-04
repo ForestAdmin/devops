@@ -5,9 +5,9 @@ const ReleaseCreator = require('./services/release-creator');
 const ReleaseNoteCreator = require('./services/release-note-creator');
 
 module.exports = {
-  release(slackToken, releaseIcon, withVersion) {
-    return new ReleaseCreator(withVersion)
+  release(slackToken, releaseIcon, options) {
+    return new ReleaseCreator(options)
       .perform()
-      .then(() => new ReleaseNoteCreator(slackToken, releaseIcon, withVersion).perform());
+      .then(() => new ReleaseNoteCreator(slackToken, releaseIcon, options).perform());
   },
 };
