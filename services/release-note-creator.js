@@ -1,13 +1,20 @@
 const { WebClient } = require('@slack/client');
-const fs = require('fs');
 const chalk = require('chalk');
 const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
+const { SlackTokenMissing, ProjectIconMissing, WronglyFormattedChangelog } = require('../utils/errors');
 
 const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(\-\w+\.\d+)? )?- .*$/;
 
-function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
+function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
+  if (!slackToken) {
+    throw new SlackTokenMissing();
+  }
+  if (!projectIcon) {
+    throw new ProjectIconMissing();
+  }
+
   const channel = options.channel || 'CMLBBF6Q3';
-  const { withVersion } = options;
+  const withVersion = options.withVersion || false;
 
   function isChange(data) {
     return !VERSION_LINE_REGEX.test(data[0]) && data.length;
@@ -24,10 +31,19 @@ function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
     while (isChange(data)) {
       changes.push(data.shift());
     }
+
+    for (let index = changes.length - 1; index >= 0; index -= 1) {
+      const line = changes[index];
+      if (line.trim()) {
+        break;
+      }
+      changes.pop();
+    }
+
     return changes;
   }
 
-  function extractLastVersionData(data) {
+  function extractLastReleaseTitleAndChanges(data) {
     if (!data.length) {
       console.error('error: no data');
       return null;
@@ -38,8 +54,7 @@ function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
     const title = data.shift();
 
     if (!data.length) {
-      console.error('error: unexpected end of file');
-      return null;
+      throw new WronglyFormattedChangelog();
     }
 
     const changes = collectChanges(data);
@@ -47,12 +62,12 @@ function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
     return { title, changes };
   }
 
-  function extractReleaseChanges(releaseIcon) {
+  function getReleaseChangesFormatted(projectIcon) {
     const data = getLinesOfChangelog();
-    const { title, changes } = extractLastVersionData(data);
+    const { title, changes } = extractLastReleaseTitleAndChanges(data);
 
     const suffixTitle = title.substring(title.indexOf(' - '))
-      .replace(' - ', `${releaseIcon} `);
+      .replace(' - ', `${projectIcon} `);
     const titleBetter = `RELEASE ${suffixTitle}`;
     let body = changes
       .join('\n')
@@ -74,7 +89,7 @@ function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
     web.files.upload({
       channels: channel,
       content,
-      filename: `${title}12.md`,
+      filename: `${title}.md`,
       filetype: 'post',
     })
       .then(() => {
@@ -89,7 +104,7 @@ function ReleaseNoteCreator(slackToken, releaseIcon, options = {}) {
   }
 
   this.perform = () => {
-    const { title, body } = extractReleaseChanges(releaseIcon);
+    const { title, body } = getReleaseChangesFormatted(projectIcon);
     postReleaseNote(title, body);
   };
 }
