@@ -9,22 +9,22 @@ const BRANCH_DEVEL = 'devel';
 const PRERELEASE_OPTIONS = ['premajor', 'preminor', 'prepatch', 'prerelease'];
 const RELEASE_OPTIONS = ['major', 'minor', 'patch', ...PRERELEASE_OPTIONS];
 
-function ReleaseCreator(options) {
-  const { withVersion } = options;
+function ReleaseCreator(argv, options = {}) {
+  const withVersion = options.withVersion || false;
 
   const parseCommandLineArguments = () => {
     let releaseType = 'patch';
     let prereleaseTag;
 
-    if (process.argv) {
-      if (process.argv[2]) {
-        const option = process.argv[2].replace('--', '');
+    if (argv) {
+      if (argv[2]) {
+        const option = argv[2].replace('--', '');
         if (RELEASE_OPTIONS.includes(option)) {
           releaseType = option;
         }
       }
-      if (process.argv[3]) {
-        const option = process.argv[3].replace('--', '');
+      if (argv[3]) {
+        const option = argv[3].replace('--', '');
         prereleaseTag = option;
       } else if (PRERELEASE_OPTIONS.includes(releaseType)) {
         prereleaseTag = 'beta';
@@ -89,7 +89,8 @@ function ReleaseCreator(options) {
     const changes = getLinesOfChangelog();
     const today = moment().format('YYYY-MM-DD');
 
-    changes.splice(3, 0, `\n## RELEASE ${withVersion ? `${version} ` : ''}- ${today}`);
+    const index = changes.indexOf('## [Unreleased]') + 1;
+    changes.splice(index, 0, `\n## RELEASE ${withVersion ? `${version} ` : ''}- ${today}`);
     const newChanges = changes.join('\n');
 
     const commitMessage = withVersion ? `Release ${version}` : `Release - ${today}`;
@@ -100,7 +101,7 @@ function ReleaseCreator(options) {
         const currentBranch = statusSummary.current;
 
         let promise;
-        if (prereleaseTag || /v\d+(\.\d+)?/i.test(currentBranch)) {
+        if (withVersion && (prereleaseTag || /v\d+(\.\d+)?/i.test(currentBranch))) {
           promise = pullAndCommitChanges(newVersionFile, newChanges, commitMessage, currentBranch)
             .then(() => addTagToGit(tag, currentBranch));
         } else {

@@ -1,7 +1,12 @@
 const fs = require('fs');
+const { ChangelogMissing } = require('./errors');
 
 function getLinesOfChangelog() {
-  return fs.readFileSync('CHANGELOG.md').toString().split('\n');
+  try {
+    return fs.readFileSync('CHANGELOG.md').toString().split('\n');
+  } catch (e) {
+    throw new ChangelogMissing();
+  }
 }
 
 function getPackageJson() {

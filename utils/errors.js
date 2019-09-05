@@ -34,8 +34,21 @@ class WronglyFormattedChangelog extends Error {
   }
 }
 
+class ChangelogMissing extends Error {
+  constructor( ...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ChangelogMissing);
+    }
+
+    this.name = 'ChangelogMissing';
+  }
+}
+
 module.exports = {
   SlackTokenMissing,
   ProjectIconMissing,
   WronglyFormattedChangelog,
+  ChangelogMissing,
 };
