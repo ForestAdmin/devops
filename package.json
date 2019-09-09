@@ -23,9 +23,6 @@
   },
   "homepage": "https://github.com/ForestAdmin/automatic-release-note#readme",
   "dependencies": {
-    "@slack/client": "^5.0.2",
-    "commander": "^3.0.1",
-    "dotenv": "^8.1.0"
   },
   "devDependencies": {}
 }
