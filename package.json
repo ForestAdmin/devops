@@ -2,13 +2,10 @@
   "name": "@forestadmin/devops",
   "version": "0.1.0",
   "description": "",
-  "main": "forest-release.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha tests/**/*"
-  },
-  "bin": {
-    "forest-release": "forest-release.js"
   },
   "repository": {
     "type": "git",
