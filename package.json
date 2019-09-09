@@ -1,5 +1,5 @@
 {
-  "name": "@forestadmin/automatic-release-note",
+  "name": "@forestadmin/devops",
   "version": "0.1.0",
   "description": "",
   "main": "forest-release.js",
