@@ -31,7 +31,7 @@ function ReleaseCreator(argv, options = {}) {
       }
     }
 
-    return { releaseType, prereleaseTag }
+    return { releaseType, prereleaseTag };
   };
 
   const pullAndCommitChanges = async (newVersionFile, newChanges, commitMessage, branchName) => {
@@ -52,22 +52,20 @@ function ReleaseCreator(argv, options = {}) {
       .commit(commitMessage)
       .push()
       .exec(() => { console.log(`Commit Release on ${branchName || 'current branch'} done.`); });
-  }
+  };
 
-  const addTagToGit = (tag, branchName) =>
-    simpleGit
-      .addTag(tag)
-      .push('origin', tag)
-      .exec(() => { console.log(`Tag ${tag} on ${branchName || 'currentBranch'} done.`); });
+  const addTagToGit = (tag, branchName) => simpleGit
+    .addTag(tag)
+    .push('origin', tag)
+    .exec(() => { console.log(`Tag ${tag} on ${branchName || 'currentBranch'} done.`); });
 
-  const mergeDevelOntoMaster = () =>
-    simpleGit
-      .checkout(BRANCH_MASTER)
-      .pull((error) => { if (error) { console.log(error); } })
-      .exec(() => { console.log(`Pull ${BRANCH_MASTER} done.`); })
-      .mergeFromTo(BRANCH_DEVEL, BRANCH_MASTER)
-      .exec(() => { console.log(`Merge ${BRANCH_DEVEL} on ${BRANCH_MASTER} done.`); })
-      .push();
+  const mergeDevelOntoMaster = () => simpleGit
+    .checkout(BRANCH_MASTER)
+    .pull((error) => { if (error) { console.log(error); } })
+    .exec(() => { console.log(`Pull ${BRANCH_MASTER} done.`); })
+    .mergeFromTo(BRANCH_DEVEL, BRANCH_MASTER)
+    .exec(() => { console.log(`Merge ${BRANCH_DEVEL} on ${BRANCH_MASTER} done.`); })
+    .push();
 
   this.perform = () => {
     let releaseType = 'patch';
@@ -79,10 +77,10 @@ function ReleaseCreator(argv, options = {}) {
       ({ releaseType, prereleaseTag } = parseCommandLineArguments());
 
       // VERSION
-      const package = getPackageJson();
-      version = semver.inc(package.version, releaseType, prereleaseTag);
-      package.version = version;
-      newVersionFile = JSON.stringify(package, null, 2);
+      const packageJson = getPackageJson();
+      version = semver.inc(packageJson.version, releaseType, prereleaseTag);
+      packageJson.version = version;
+      newVersionFile = JSON.stringify(packageJson, null, 2);
     }
 
     // CHANGELOG
@@ -107,11 +105,11 @@ function ReleaseCreator(argv, options = {}) {
         } else {
           promise = pullAndCommitChanges(newVersionFile, newChanges, commitMessage, BRANCH_DEVEL)
             .then(() => mergeDevelOntoMaster())
-            .then(() => withVersion ? addTagToGit(tag, BRANCH_MASTER) : simpleGit)
+            .then(() => (withVersion ? addTagToGit(tag, BRANCH_MASTER) : simpleGit))
             .then(() => simpleGit.checkout(BRANCH_DEVEL));
         }
 
-        promise.catch(error => console.error(error));
+        promise.catch((error) => console.error(error));
 
         resolve(promise);
       });

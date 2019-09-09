@@ -1,7 +1,7 @@
 const mockFs = require('mock-fs');
 const mockRequire = require('mock-require');
 const { expect } = require('chai');
-const { SlackTokenMissing, ProjectIconMissing, WronglyFormattedChangelog } = require('../../utils/errors');
+const { SlackTokenMissingError, ProjectIconMissingError, WronglyFormattedChangelogError } = require('../../utils/errors');
 let ReleaseNoteCreator = require('../../services/release-note-creator');
 
 describe('Service > ReleaseNoteCreator', () => {
@@ -10,18 +10,18 @@ describe('Service > ReleaseNoteCreator', () => {
 
   before(() => {
     mockRequire('@slack/client', {
-      WebClient: function (token) {
+      WebClient: function WebClient(token) {
         slackToken = token;
 
         this.files = {
           upload(file) {
             uploadedContent = file;
             return Promise.resolve();
-          }
+          },
         };
 
         return this;
-      }
+      },
     });
 
     ReleaseNoteCreator = mockRequire.reRequire('../../services/release-note-creator');
@@ -29,26 +29,26 @@ describe('Service > ReleaseNoteCreator', () => {
 
   describe('with no Slack token', () => {
     it('should throw an error', () => {
-      expect(() => new ReleaseNoteCreator(null, '😁')).to.throw(SlackTokenMissing);
+      expect(() => new ReleaseNoteCreator(null, '😁')).to.throw(SlackTokenMissingError);
     });
   });
 
   describe('with no project icon', () => {
     it('should throw an error', () => {
-      expect(() => new ReleaseNoteCreator('fake')).to.throw(ProjectIconMissing);
+      expect(() => new ReleaseNoteCreator('fake')).to.throw(ProjectIconMissingError);
     });
   });
 
   describe('with no CHANGELOG.md', () => {
     it('should throw an error', () => {
       expect(() => new ReleaseNoteCreator('fake', '😁').perform())
-        .to.throw(WronglyFormattedChangelog);
-    })
+        .to.throw(WronglyFormattedChangelogError);
+    });
   });
 
   describe('with a custom channel', () => {
-        const changelog =
-    `# Changelog
+    const changelog = `
+# Changelog
 ## [Unreleased]
 
 ## RELEASE - 2019-08-23
@@ -72,12 +72,12 @@ describe('Service > ReleaseNoteCreator', () => {
 
       expect(uploadedContent).to.not.be.undefined;
       expect(uploadedContent.channels).equal('test');
-    })
+    });
   });
 
   describe('Changelog with no version', () => {
-    const changelog =
-    `# Changelog
+    const changelog = `
+# Changelog
 ## [Unreleased]
 ### Added
 - Technical - Tests.
@@ -92,7 +92,7 @@ describe('Service > ReleaseNoteCreator', () => {
 ### Fixed
 - Style - Update style.
     `;
-    const package = `{
+    const packageJson = `{
       "name": "forestapi-server",
       "description": "Official Forest API for the projects management",
       "version": "0.0.0"
@@ -100,7 +100,7 @@ describe('Service > ReleaseNoteCreator', () => {
     before(() => {
       mockFs({
         'CHANGELOG.md': changelog,
-        'package.json': package,
+        'package.json': packageJson,
       });
     });
 
@@ -123,8 +123,8 @@ describe('Service > ReleaseNoteCreator', () => {
   });
 
   describe('Changelog with version', () => {
-    const changelog =
-    `# Changelog
+    const changelog = `
+# Changelog
 ## [Unreleased]
 ### Added
 - Technical - Tests.
@@ -136,7 +136,7 @@ describe('Service > ReleaseNoteCreator', () => {
 ### Fixed
 - Serializer - Fix serialization of records with id 0.
     `;
-    const package = `{
+    const packageJson = `{
       "name": "forest-express",
       "description": "Official package for all Forest Express Lianas",
       "version": "3.2.6"
@@ -144,7 +144,7 @@ describe('Service > ReleaseNoteCreator', () => {
     before(() => {
       mockFs({
         'CHANGELOG.md': changelog,
-        'package.json': package,
+        'package.json': packageJson,
       });
     });
 

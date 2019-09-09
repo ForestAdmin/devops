@@ -3,10 +3,7 @@ const fs = require('fs');
 const mockRequire = require('mock-require');
 const { expect } = require('chai');
 const {
-  SlackTokenMissing,
-  ProjectIconMissing,
-  WronglyFormattedChangelog,
-  ChangelogMissing,
+  ChangelogMissingError,
 } = require('../../utils/errors');
 let ReleaseCreator = require('../../services/release-creator');
 
@@ -40,11 +37,11 @@ describe('Service > ReleaseCreator', () => {
     startBranch = branch;
     currentBranch = branch;
 
-    const MockGit = function () {
-      this.checkout = (branch) => {
-        if (branch !== currentBranch) {
-          currentBranch = branch;
-          branches.push(branch);
+    const MockGit = function MockGit() {
+      this.checkout = (checkoutBranch) => {
+        if (checkoutBranch !== currentBranch) {
+          currentBranch = checkoutBranch;
+          branches.push(checkoutBranch);
         }
         return this;
       };
@@ -86,13 +83,11 @@ describe('Service > ReleaseCreator', () => {
   };
 
   before(() => {
-    mockRequire('moment', function () {
-      return {
-        format() {
-          return '2019-08-31';
-        },
-      };
-    });
+    mockRequire('moment', () => ({
+      format() {
+        return '2019-08-31';
+      },
+    }));
   });
 
   describe('with no CHANGELOG.md', () => {
@@ -108,14 +103,13 @@ describe('Service > ReleaseCreator', () => {
 
     it('should throw an error', () => {
       expect(() => new ReleaseCreator('fake', '😁').perform())
-        .to.throw(ChangelogMissing);
-    })
+        .to.throw(ChangelogMissingError);
+    });
   });
 
   describe('Changelog with no version', () => {
     describe('from devel branch', () => {
-      const changelog =
-      `# Changelog
+      const changelog = `# Changelog
 ## [Unreleased]
 ### Added
 - Technical - Tests.
@@ -148,7 +142,8 @@ describe('Service > ReleaseCreator', () => {
       });
 
       it('should update the CHANGELOG.md', () => {
-        expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+        expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+          `# Changelog
 ## [Unreleased]
 
 ## RELEASE - 2019-08-31
@@ -163,7 +158,8 @@ describe('Service > ReleaseCreator', () => {
 - Admin - Upgrade the liana to the latest beta version.
 
 ### Fixed
-- Style - Update style.`);
+- Style - Update style.`,
+        );
       });
 
       it('should pull and commit changes', () => {
@@ -171,7 +167,7 @@ describe('Service > ReleaseCreator', () => {
         expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
         expect(commitMessage).equal('Release - 2019-08-31');
         expect(pushes[0]).equal('devel');
-      })
+      });
 
       it('should merge devel onto master', () => {
         expect(branches[0]).equal('master');
@@ -187,8 +183,7 @@ describe('Service > ReleaseCreator', () => {
     });
 
     describe('from v4 branch', () => {
-      const changelog =
-      `# Changelog
+      const changelog = `# Changelog
 ## [Unreleased]
 ### Added
 - Technical - Tests.
@@ -221,7 +216,8 @@ describe('Service > ReleaseCreator', () => {
       });
 
       it('should update the CHANGELOG.md', () => {
-        expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+        expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+          `# Changelog
 ## [Unreleased]
 
 ## RELEASE - 2019-08-31
@@ -236,7 +232,8 @@ describe('Service > ReleaseCreator', () => {
 - Admin - Upgrade the liana to the latest beta version.
 
 ### Fixed
-- Style - Update style.`);
+- Style - Update style.`,
+        );
       });
 
       it('should pull and commit changes', () => {
@@ -245,7 +242,7 @@ describe('Service > ReleaseCreator', () => {
         expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
         expect(commitMessage).equal('Release - 2019-08-31');
         expect(pushes[0]).equal('devel');
-      })
+      });
 
       it('should merge devel onto master', () => {
         expect(branches[1]).equal('master');
@@ -262,8 +259,7 @@ describe('Service > ReleaseCreator', () => {
   });
 
   describe('Changelog with version', () => {
-    const changelog =
-    `# Changelog
+    const changelog = `# Changelog
 
 ## [Unreleased]
 ### Added
@@ -275,7 +271,7 @@ describe('Service > ReleaseCreator', () => {
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
 - Command Generate - Add support for TIME type.`;
-    const package = `{
+    const packageJson = `{
       "name": "lumber-cli",
       "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
       "version": "2.3.9"
@@ -293,7 +289,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator(null, { withVersion: true }).perform();
@@ -304,7 +300,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -317,7 +314,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -333,7 +331,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 2.3.10');
           expect(pushes[0]).equal('devel');
-        })
+        });
 
         it('should merge devel onto master', () => {
           expect(branches[0]).equal('master');
@@ -358,7 +356,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator([...defaultArgv, '--minor'], { withVersion: true }).perform();
@@ -369,7 +367,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -382,7 +381,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -398,7 +398,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 2.4.0');
           expect(pushes[0]).equal('devel');
-        })
+        });
 
         it('should merge devel onto master', () => {
           expect(branches[0]).equal('master');
@@ -423,7 +423,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator([...defaultArgv, '--major'], { withVersion: true }).perform();
@@ -434,7 +434,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -447,7 +448,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -463,7 +465,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 3.0.0');
           expect(pushes[0]).equal('devel');
-        })
+        });
 
         it('should merge devel onto master', () => {
           expect(branches[0]).equal('master');
@@ -483,8 +485,7 @@ describe('Service > ReleaseCreator', () => {
       });
 
       describe('release prerelease', () => {
-        const changelog =
-        `# Changelog
+        const prereleaseChangelog = `# Changelog
 
 ## [Unreleased]
 ### Added
@@ -496,7 +497,7 @@ describe('Service > ReleaseCreator', () => {
 ## RELEASE 2.3.9-beta.0 - 2019-08-29
 ### Fixed
 - Command Generate - Add support for TIME type.`;
-        const package = `{
+        const prereleasePackageJson = `{
           "name": "lumber-cli",
           "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
           "version": "2.3.9-beta.0"
@@ -507,8 +508,8 @@ describe('Service > ReleaseCreator', () => {
             resetVariables();
 
             mockFs({
-              'CHANGELOG.md': changelog,
-              'package.json': package,
+              'CHANGELOG.md': prereleaseChangelog,
+              'package.json': prereleasePackageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prerelease'], { withVersion: true }).perform();
@@ -548,7 +549,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.9-beta.1');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -569,8 +570,8 @@ describe('Service > ReleaseCreator', () => {
             resetVariables();
 
             mockFs({
-              'CHANGELOG.md': changelog,
-              'package.json': package,
+              'CHANGELOG.md': prereleaseChangelog,
+              'package.json': prereleasePackageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prerelease', '--alpha'], { withVersion: true }).perform();
@@ -581,7 +582,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -594,7 +596,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9-beta.0 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -610,7 +613,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.9-alpha.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -634,7 +637,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prepatch'], { withVersion: true }).perform();
@@ -645,7 +648,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -658,7 +662,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -674,7 +679,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.10-beta.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -696,7 +701,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prepatch', '--alpha'], { withVersion: true }).perform();
@@ -707,7 +712,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -720,7 +726,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -736,7 +743,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.10-alpha.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -760,7 +767,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--preminor'], { withVersion: true }).perform();
@@ -771,7 +778,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -784,7 +792,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -800,7 +809,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.4.0-beta.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -822,7 +831,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--preminor', '--alpha'], { withVersion: true }).perform();
@@ -833,7 +842,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -846,7 +856,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -862,7 +873,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.4.0-alpha.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -886,7 +897,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--premajor'], { withVersion: true }).perform();
@@ -897,7 +908,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -910,7 +922,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -926,7 +939,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 3.0.0-beta.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -948,7 +961,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--premajor', '--alpha'], { withVersion: true }).perform();
@@ -959,7 +972,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -972,7 +986,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -988,7 +1003,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 3.0.0-alpha.0');
             expect(pushes[0]).equal('devel');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1020,7 +1035,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator(null, { withVersion: true }).perform();
@@ -1031,7 +1046,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -1044,7 +1060,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -1060,7 +1077,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 2.3.10');
           expect(pushes[0]).equal('v4');
-        })
+        });
 
         it('should not merge devel onto master', () => {
           expect(branches).to.be.empty;
@@ -1081,7 +1098,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator([...defaultArgv, '--minor'], { withVersion: true }).perform();
@@ -1092,7 +1109,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -1105,7 +1123,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -1121,7 +1140,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 2.4.0');
           expect(pushes[0]).equal('v4');
-        })
+        });
 
         it('should not merge devel onto master', () => {
           expect(branches).to.be.empty;
@@ -1142,7 +1161,7 @@ describe('Service > ReleaseCreator', () => {
 
           mockFs({
             'CHANGELOG.md': changelog,
-            'package.json': package,
+            'package.json': packageJson,
           });
 
           new ReleaseCreator([...defaultArgv, '--major'], { withVersion: true }).perform();
@@ -1153,7 +1172,8 @@ describe('Service > ReleaseCreator', () => {
         });
 
         it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+            `# Changelog
 
 ## [Unreleased]
 
@@ -1166,7 +1186,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+          );
         });
 
         it('should update the package.json', () => {
@@ -1182,7 +1203,7 @@ describe('Service > ReleaseCreator', () => {
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
           expect(commitMessage).equal('Release 3.0.0');
           expect(pushes[0]).equal('v4');
-        })
+        });
 
         it('should not merge devel onto master', () => {
           expect(branches).to.be.empty;
@@ -1198,8 +1219,7 @@ describe('Service > ReleaseCreator', () => {
       });
 
       describe('release prerelease', () => {
-        const changelog =
-        `# Changelog
+        const prereleaseChangelog = `# Changelog
 
 ## [Unreleased]
 ### Added
@@ -1211,7 +1231,7 @@ describe('Service > ReleaseCreator', () => {
 ## RELEASE 2.3.9-beta.0 - 2019-08-29
 ### Fixed
 - Command Generate - Add support for TIME type.`;
-        const package = `{
+        const prereleasePackageJson = `{
           "name": "lumber-cli",
           "description": "Create your backend application in minutes. GraphQL API backend based on a database schema",
           "version": "2.3.9-beta.0"
@@ -1222,8 +1242,8 @@ describe('Service > ReleaseCreator', () => {
             resetVariables();
 
             mockFs({
-              'CHANGELOG.md': changelog,
-              'package.json': package,
+              'CHANGELOG.md': prereleaseChangelog,
+              'package.json': prereleasePackageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prerelease'], { withVersion: true }).perform();
@@ -1234,7 +1254,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1247,7 +1268,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9-beta.0 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1263,7 +1285,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.9-beta.1');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1284,8 +1306,8 @@ describe('Service > ReleaseCreator', () => {
             resetVariables();
 
             mockFs({
-              'CHANGELOG.md': changelog,
-              'package.json': package,
+              'CHANGELOG.md': prereleaseChangelog,
+              'package.json': prereleasePackageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prerelease', '--alpha'], { withVersion: true }).perform();
@@ -1296,7 +1318,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1309,7 +1332,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9-beta.0 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1325,7 +1349,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.9-alpha.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1349,7 +1373,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prepatch'], { withVersion: true }).perform();
@@ -1360,7 +1384,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1373,7 +1398,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1389,7 +1415,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.10-beta.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1411,7 +1437,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--prepatch', '--alpha'], { withVersion: true }).perform();
@@ -1422,7 +1448,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1435,7 +1462,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1451,7 +1479,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.3.10-alpha.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1475,7 +1503,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--preminor'], { withVersion: true }).perform();
@@ -1486,7 +1514,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1499,7 +1528,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1515,7 +1545,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.4.0-beta.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1537,7 +1567,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--preminor', '--alpha'], { withVersion: true }).perform();
@@ -1548,7 +1578,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1561,7 +1592,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1577,7 +1609,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 2.4.0-alpha.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1601,7 +1633,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--premajor'], { withVersion: true }).perform();
@@ -1612,7 +1644,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1625,7 +1658,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1641,7 +1675,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 3.0.0-beta.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;
@@ -1663,7 +1697,7 @@ describe('Service > ReleaseCreator', () => {
 
             mockFs({
               'CHANGELOG.md': changelog,
-              'package.json': package,
+              'package.json': packageJson,
             });
 
             new ReleaseCreator([...defaultArgv, '--premajor', '--alpha'], { withVersion: true }).perform();
@@ -1674,7 +1708,8 @@ describe('Service > ReleaseCreator', () => {
           });
 
           it('should update the CHANGELOG.md', () => {
-            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(`# Changelog
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -1687,7 +1722,8 @@ describe('Service > ReleaseCreator', () => {
 
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
-- Command Generate - Add support for TIME type.`);
+- Command Generate - Add support for TIME type.`,
+            );
           });
 
           it('should update the package.json', () => {
@@ -1703,7 +1739,7 @@ describe('Service > ReleaseCreator', () => {
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
             expect(commitMessage).equal('Release 3.0.0-alpha.0');
             expect(pushes[0]).equal('v4');
-          })
+          });
 
           it('should not checkout onto another branch', () => {
             expect(branches).empty;

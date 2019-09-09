@@ -1,34 +1,34 @@
 const { WebClient } = require('@slack/client');
 const chalk = require('chalk');
 const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
-const { SlackTokenMissing, ProjectIconMissing, WronglyFormattedChangelog } = require('../utils/errors');
+const { SlackTokenMissingError, ProjectIconMissingError, WronglyFormattedChangelogError } = require('../utils/errors');
 
-const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(\-\w+\.\d+)? )?- .*$/;
+const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(-\w+\.\d+)? )?- .*$/;
 
 function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
   if (!slackToken) {
-    throw new SlackTokenMissing();
+    throw new SlackTokenMissingError();
   }
   if (!projectIcon) {
-    throw new ProjectIconMissing();
+    throw new ProjectIconMissingError();
   }
 
   const channel = options.channel || 'CMLBBF6Q3';
   const withVersion = options.withVersion || false;
 
-  function isChange(data) {
+  function isNotReleaseTitle(data) {
     return !VERSION_LINE_REGEX.test(data[0]) && data.length;
   }
 
   function findReleaseHeader(data) {
-    while (isChange(data)) {
+    while (isNotReleaseTitle(data)) {
       data.shift();
     }
   }
 
   function collectChanges(data) {
     const changes = [];
-    while (isChange(data)) {
+    while (isNotReleaseTitle(data)) {
       changes.push(data.shift());
     }
 
@@ -54,7 +54,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
     const title = data.shift();
 
     if (!data.length) {
-      throw new WronglyFormattedChangelog();
+      throw new WronglyFormattedChangelogError();
     }
 
     const changes = collectChanges(data);
@@ -62,7 +62,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
     return { title, changes };
   }
 
-  function getReleaseChangesFormatted(projectIcon) {
+  function getReleaseChangesFormatted() {
     const data = getLinesOfChangelog();
     const { title, changes } = extractLastReleaseTitleAndChanges(data);
 
@@ -76,8 +76,8 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
       .replace('### Fixed', '## 💉 Fixed');
 
     if (withVersion) {
-      const package = getPackageJson();
-      body = `# ${package.name} v${package.version}\n\n${body}`
+      const packageJson = getPackageJson();
+      body = `# ${packageJson.name} v${packageJson.version}\n\n${body}`;
     }
 
     return { title: titleBetter, body };
@@ -104,7 +104,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
   }
 
   this.perform = () => {
-    const { title, body } = getReleaseChangesFormatted(projectIcon);
+    const { title, body } = getReleaseChangesFormatted();
     postReleaseNote(title, body);
   };
 }

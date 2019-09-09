@@ -1,54 +1,56 @@
-class SlackTokenMissing extends Error {
-  constructor( ...params) {
+/* eslint max-classes-per-file: 0 */
+
+class SlackTokenMissingError extends Error {
+  constructor(...params) {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, SlackTokenMissing);
+      Error.captureStackTrace(this, SlackTokenMissingError);
     }
 
-    this.name = 'SlackTokenMissing';
+    this.name = 'SlackTokenMissingError';
   }
 }
 
-class ProjectIconMissing extends Error {
-  constructor( ...params) {
+class ProjectIconMissingError extends Error {
+  constructor(...params) {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ProjectIconMissing);
+      Error.captureStackTrace(this, ProjectIconMissingError);
     }
 
-    this.name = 'ProjectIconMissing';
+    this.name = 'ProjectIconMissingError';
   }
 }
 
-class WronglyFormattedChangelog extends Error {
-  constructor( ...params) {
+class WronglyFormattedChangelogError extends Error {
+  constructor(...params) {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, WronglyFormattedChangelog);
+      Error.captureStackTrace(this, WronglyFormattedChangelogError);
     }
 
-    this.name = 'WronglyFormattedChangelog';
+    this.name = 'WronglyFormattedChangelogError';
   }
 }
 
-class ChangelogMissing extends Error {
-  constructor( ...params) {
+class ChangelogMissingError extends Error {
+  constructor(...params) {
     super(...params);
 
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, ChangelogMissing);
+      Error.captureStackTrace(this, ChangelogMissingError);
     }
 
-    this.name = 'ChangelogMissing';
+    this.name = 'ChangelogMissingError';
   }
 }
 
 module.exports = {
-  SlackTokenMissing,
-  ProjectIconMissing,
-  WronglyFormattedChangelog,
-  ChangelogMissing,
+  SlackTokenMissingError,
+  ProjectIconMissingError,
+  WronglyFormattedChangelogError,
+  ChangelogMissingError,
 };
