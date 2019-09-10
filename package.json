@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./services ./utils ./tests",
-    "test": "./node_modules/mocha/bin/mocha tests/**/*"
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./services ./utils ./test",
+    "test": "./node_modules/mocha/bin/mocha test/**/*"
   },
   "repository": {
     "type": "git",
