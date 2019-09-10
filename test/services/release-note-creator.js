@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const { SlackTokenMissingError, ProjectIconMissingError, WronglyFormattedChangelogError } = require('../../utils/errors');
 let ReleaseNoteCreator = require('../../services/release-note-creator');
 
-describe('Service > ReleaseNoteCreator', () => {
+describe('Services > Release Note Creator', () => {
   let slackToken;
   let uploadedContent;
 

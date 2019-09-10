@@ -7,7 +7,7 @@ const {
 } = require('../../utils/errors');
 let ReleaseCreator = require('../../services/release-creator');
 
-describe('Service > ReleaseCreator', () => {
+describe('Services > Release Creator', () => {
   const defaultArgv = ['node', 'release'];
 
   let branches;
