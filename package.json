@@ -20,7 +20,10 @@
   "keywords": [
     "release"
   ],
-  "author": "vincentm@forestadmin.com",
+  "author": "Vincent Molinié <vincentm@forestadmin.com>",
+  "contributors": [
+    "Arnaud Besnier <arnaudibesnier@gmail.com>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ForestAdmin/automatic-release-note/issues"
