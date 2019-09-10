@@ -5,7 +5,7 @@
 ## Slack Token
 You can create a token by following this link https://api.slack.com/custom-integrations/legacy-tokens.
 
-## How to ?
+## How to?
 
 ### Release
 This process will:
