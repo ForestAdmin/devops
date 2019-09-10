@@ -311,7 +311,7 @@ describe('Services > Release Creator', () => {
             mockFs.restore();
           });
 
-          it('should throw an error', async () => {
+          it('should throw a GitPullError error', async () => {
             await expect(new ReleaseCreator('fake', '😁').perform())
               .to.be.rejectedWith(GitPullError);
           });

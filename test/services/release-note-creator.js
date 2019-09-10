@@ -1,12 +1,21 @@
 const mockFs = require('mock-fs');
 const mockRequire = require('mock-require');
-const { expect } = require('chai');
-const { SlackTokenMissingError, ProjectIconMissingError, WronglyFormattedChangelogError } = require('../../utils/errors');
+const chai = require('chai');
+chai.use(require('chai-as-promised'));
+const {
+  SlackTokenMissingError,
+  SlackConnectionError,
+  ProjectIconMissingError,
+  WronglyFormattedChangelogError,
+} = require('../../utils/errors');
 let ReleaseNoteCreator = require('../../services/release-note-creator');
+
+const { expect } = chai;
 
 describe('Services > Release Note Creator', () => {
   let slackToken;
   let uploadedContent;
+  let slackServicesUp = true;
 
   before(() => {
     mockRequire('@slack/client', {
@@ -15,8 +24,12 @@ describe('Services > Release Note Creator', () => {
 
         this.files = {
           upload(file) {
-            uploadedContent = file;
-            return Promise.resolve();
+            if (slackServicesUp) {
+              uploadedContent = file;
+              return Promise.resolve();
+            } else {
+              return Promise.reject(new Error('Cannot upload the file on Slack'));
+            }
           },
         };
 
@@ -41,6 +54,25 @@ describe('Services > Release Note Creator', () => {
 
   describe('with no CHANGELOG.md', () => {
     it('should throw an error', () => {
+      expect(() => new ReleaseNoteCreator('fake', '😁').perform())
+        .to.throw(WronglyFormattedChangelogError);
+    });
+  });
+
+  describe('with an empty CHANGELOG.md', () => {
+    const changelog = '';
+
+    before(() => {
+      mockFs({
+        'CHANGELOG.md': changelog,
+      });
+    });
+
+    after(() => {
+      mockFs.restore();
+    });
+
+    it('should throw a WronglyFormattedChangelogError error', () => {
       expect(() => new ReleaseNoteCreator('fake', '😁').perform())
         .to.throw(WronglyFormattedChangelogError);
     });
@@ -164,5 +196,41 @@ describe('Services > Release Note Creator', () => {
         content: '# forest-express v3.2.6\n\n## 💉 Fixed\n- Serializer - Fix serialization of records with id 0.',
       });
     });
+  });
+
+  describe('with an error during file upload', () => {
+    const changelog = `
+# Changelog
+## [Unreleased]
+### Added
+- Technical - Tests.
+
+### Changed
+- Test - New way.
+
+## RELEASE - 2019-08-23
+### Changed
+- Admin - Upgrade the liana to the latest beta version.
+
+### Fixed
+- Style - Update style.
+    `;
+
+    before(() => {
+      slackServicesUp = false;
+      mockFs({
+        'CHANGELOG.md': changelog,
+      });
+    });
+    after(() => {
+      mockFs.restore();
+    });
+
+    ReleaseNoteCreator = mockRequire.reRequire('../../services/release-note-creator');
+
+    it('should', async () => {
+      await expect(new ReleaseNoteCreator('fake', '😁').perform())
+        .to.be.rejectedWith(SlackConnectionError);
+    })
   });
 });

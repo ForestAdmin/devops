@@ -1,7 +1,12 @@
 const { WebClient } = require('@slack/client');
 const chalk = require('chalk');
 const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
-const { SlackTokenMissingError, ProjectIconMissingError, WronglyFormattedChangelogError } = require('../utils/errors');
+const {
+  SlackTokenMissingError,
+  SlackConnectionError,
+  ProjectIconMissingError,
+  WronglyFormattedChangelogError,
+} = require('../utils/errors');
 
 const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(-\w+\.\d+)? )?- .*$/;
 
@@ -44,9 +49,8 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
   }
 
   function extractLastReleaseTitleAndChanges(data) {
-    if (!data.length) {
-      console.error('error: no data');
-      return null;
+    if (!data.length || (data.length === 1 && data[0] === '')) {
+      throw new WronglyFormattedChangelogError();
     }
 
     findReleaseHeader(data);
@@ -84,9 +88,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
   }
 
   function postReleaseNote(title, content) {
-    const web = new WebClient(slackToken);
-
-    web.files.upload({
+    return new WebClient(slackToken).files.upload({
       channels: channel,
       content,
       filename: `${title}.md`,
@@ -98,14 +100,13 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
       .catch((error) => {
         console.log(chalk.red(`Cannot upload the release note. Be sure to pass a correct slackToken, current token is: ${slackToken}.`));
         console.log(chalk.red('To generate a token, go here: https://api.slack.com/custom-integrations/legacy-tokens\n'));
-        console.log(chalk.red('Original error:'));
-        console.error(error);
+        throw new SlackConnectionError(error);
       });
   }
 
   this.perform = () => {
     const { title, body } = getReleaseChangesFormatted();
-    postReleaseNote(title, body);
+    return postReleaseNote(title, body);
   };
 }
 

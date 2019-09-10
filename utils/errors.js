@@ -12,6 +12,18 @@ class SlackTokenMissingError extends Error {
   }
 }
 
+class SlackConnectionError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, SlackConnectionError);
+    }
+
+    this.name = 'SlackConnectionError';
+  }
+}
+
 class ProjectIconMissingError extends Error {
   constructor(...params) {
     super(...params);
@@ -62,6 +74,7 @@ class GitPullError extends Error {
 
 module.exports = {
   SlackTokenMissingError,
+  SlackConnectionError,
   ProjectIconMissingError,
   WronglyFormattedChangelogError,
   ChangelogMissingError,
