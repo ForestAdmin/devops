@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./services ./utils ./test",
-    "test": "./node_modules/mocha/bin/mocha test/**/*",
-    "test:coverage": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha test/**/*",
+    "test": "./node_modules/mocha/bin/mocha test/**",
+    "test:coverage": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha test/**",
     "coverage:report:html": "./node_modules/nyc/bin/nyc.js report --reporter=html",
     "coverage:report:summary": "./node_modules/nyc/bin/nyc.js report --reporter=text-summary",
     "coverage:report:lcov": "./node_modules/nyc/bin/nyc.js report --reporter=lcov",
