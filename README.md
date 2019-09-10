@@ -11,15 +11,19 @@ You can create a token by following this link https://api.slack.com/custom-integ
 This will merge if necessary devel onto master, add specific tag and send a note to slack.
 ```JavaScript
 import { ReleaseManager } from '@forestadmin/devops';
-// Or with require
+// NOTICE: or with require
 const { ReleaseManager } = require('@forestadmin/devops');
 
-new ReleaseManager(slackToken, releaseIcon, options);
+const slackToken = process.env.DEVOPS_SLACK_TOKEN;
+const releaseIcon = '🌱';
+const options = {};
+
+new ReleaseManager(slackToken, releaseIcon, options).create();
 ```
 
 Arguments:
-- slackToken: A token that you can get here https://api.slack.com/custom-integrations/legacy-tokens
-- releaseIcon: An icon representing the project
-- options:
-  - withVersion: Boolean. True if project has version.
-  - channel: String. The slack channel to send to.
+- `slackToken`: A token that you can get here https://api.slack.com/custom-integrations/legacy-tokens
+- `releaseIcon`: An icon representing the project
+- `options`:
+  - `withVersion`: Boolean. True if project has version.
+  - `channel`: String. The slack channel to send to.
