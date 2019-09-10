@@ -117,5 +117,4 @@ function ReleaseCreator(argv, options = {}) {
   };
 }
 
-
 module.exports = ReleaseCreator;

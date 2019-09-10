@@ -1,5 +1,6 @@
 # Forest Admin DevOps Tools
 [![Build Status](https://travis-ci.com/ForestAdmin/devops.svg?token=GhLkKxborSQok42EpFsc&branch=devel)](https://travis-ci.org/ForestAdmin/devops)
+![Coverage](https://img.shields.io/badge/coverage-94%25%0A-important)
 
 ## Slack Token
 You can create a token by following this link https://api.slack.com/custom-integrations/legacy-tokens.
