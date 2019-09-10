@@ -7,12 +7,14 @@ You can create a token by following this link https://api.slack.com/custom-integ
 
 ## How to ?
 
-### Do a release
-This will merge if necessary devel onto master, add specific tag and send a note to slack.
+### Release
+This process will:
+- merge `devel` into `master` (if necessary),
+- add a specific tag (if necessary)
+- send a note of the changes released to a specific Slack channel.
+
 ```JavaScript
 import { ReleaseManager } from '@forestadmin/devops';
-// NOTICE: or with require
-const { ReleaseManager } = require('@forestadmin/devops');
 
 const slackToken = process.env.DEVOPS_SLACK_TOKEN;
 const releaseIcon = '🌱';
@@ -27,3 +29,12 @@ Arguments:
 - `options`:
   - `withVersion`: Boolean. True if project has version.
   - `channel`: String. The slack channel to send to.
+
+### Update the coverage badge
+This process will update the coverage badge in the `README.md` file base on the `lcov` coverage report.
+
+```JavaScript
+import { CoverageManager } from '@forestadmin/devops';
+
+new CoverageManager().updateBadge();
+```
