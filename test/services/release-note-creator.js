@@ -27,9 +27,8 @@ describe('Services > Release Note Creator', () => {
             if (slackServicesUp) {
               uploadedContent = file;
               return Promise.resolve();
-            } else {
-              return Promise.reject(new Error('Cannot upload the file on Slack'));
             }
+            return Promise.reject(new Error('Cannot upload the file on Slack'));
           },
         };
 
@@ -228,9 +227,9 @@ describe('Services > Release Note Creator', () => {
 
     ReleaseNoteCreator = mockRequire.reRequire('../../services/release-note-creator');
 
-    it('should', async () => {
+    it('should throw a SlackConnectionError error', async () => {
       await expect(new ReleaseNoteCreator('fake', '😁').perform())
         .to.be.rejectedWith(SlackConnectionError);
-    })
+    });
   });
 });
