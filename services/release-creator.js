@@ -3,6 +3,7 @@ const fs = require('fs');
 const simpleGit = require('simple-git')();
 const semver = require('semver');
 const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
+const { GitPullError } = require('../utils/errors');
 
 const BRANCH_MASTER = 'master';
 const BRANCH_DEVEL = 'devel';
@@ -34,14 +35,22 @@ function ReleaseCreator(argv, options = {}) {
     return { releaseType, prereleaseTag };
   };
 
+  const gitPullErrorCatcher = (error) => {
+    if (error) {
+      throw new GitPullError();
+    }
+  };
+
+  const getBranchLabel = (branchName) => branchName || 'current branch';
+
   const pullAndCommitChanges = async (newVersionFile, newChanges, commitMessage, branchName) => {
     if (branchName) {
       await simpleGit.checkout(branchName);
     }
 
     return simpleGit
-      .pull((error) => { if (error) { console.log(error); } })
-      .exec(() => { console.log(`Pull ${branchName || 'current branch'} done.`); })
+      .pull(gitPullErrorCatcher)
+      .exec(() => { console.log(`Pull ${getBranchLabel(branchName)} done.`); })
       .exec(() => {
         if (withVersion) {
           fs.writeFileSync('package.json', newVersionFile);
@@ -51,17 +60,17 @@ function ReleaseCreator(argv, options = {}) {
       .add(['CHANGELOG.md', 'package.json'])
       .commit(commitMessage)
       .push()
-      .exec(() => { console.log(`Commit Release on ${branchName || 'current branch'} done.`); });
+      .exec(() => { console.log(`Commit Release on ${getBranchLabel(branchName)} done.`); });
   };
 
   const addTagToGit = (tag, branchName) => simpleGit
     .addTag(tag)
     .push('origin', tag)
-    .exec(() => { console.log(`Tag ${tag} on ${branchName || 'currentBranch'} done.`); });
+    .exec(() => { console.log(`Tag ${tag} on ${getBranchLabel(branchName)} done.`); });
 
   const mergeDevelOntoMaster = () => simpleGit
     .checkout(BRANCH_MASTER)
-    .pull((error) => { if (error) { console.log(error); } })
+    .pull(gitPullErrorCatcher)
     .exec(() => { console.log(`Pull ${BRANCH_MASTER} done.`); })
     .mergeFromTo(BRANCH_DEVEL, BRANCH_MASTER)
     .exec(() => { console.log(`Merge ${BRANCH_DEVEL} on ${BRANCH_MASTER} done.`); })
@@ -109,7 +118,7 @@ function ReleaseCreator(argv, options = {}) {
             .then(() => simpleGit.checkout(BRANCH_DEVEL));
         }
 
-        promise.catch((error) => console.error(error));
+        promise.catch(() => {});
 
         resolve(promise);
       });

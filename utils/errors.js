@@ -48,9 +48,22 @@ class ChangelogMissingError extends Error {
   }
 }
 
+class GitPullError extends Error {
+  constructor(...params) {
+    super(...params);
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, GitPullError);
+    }
+
+    this.name = 'GitPullError';
+  }
+}
+
 module.exports = {
   SlackTokenMissingError,
   ProjectIconMissingError,
   WronglyFormattedChangelogError,
   ChangelogMissingError,
+  GitPullError,
 };

@@ -1,11 +1,15 @@
 const mockFs = require('mock-fs');
 const fs = require('fs');
 const mockRequire = require('mock-require');
-const { expect } = require('chai');
+const chai = require('chai');
+chai.use(require('chai-as-promised'));
 const {
   ChangelogMissingError,
+  GitPullError,
 } = require('../../utils/errors');
 let ReleaseCreator = require('../../services/release-creator');
+
+const { expect } = chai;
 
 describe('Services > Release Creator', () => {
   const defaultArgv = ['node', 'release'];
@@ -33,7 +37,7 @@ describe('Services > Release Creator', () => {
     currentBranch = startBranch;
   };
 
-  const createMockGit = (branch) => {
+  const createMockGit = (branch, pullError) => {
     startBranch = branch;
     currentBranch = branch;
 
@@ -45,8 +49,12 @@ describe('Services > Release Creator', () => {
         }
         return this;
       };
-      this.pull = () => {
-        pulls.push(currentBranch);
+      this.pull = (catcher) => {
+        if (pullError) {
+          catcher('Cannot pull from Github');
+        } else {
+          pulls.push(currentBranch);
+        }
         return this;
       };
       this.exec = (fn) => {
@@ -284,24 +292,54 @@ describe('Services > Release Creator', () => {
       });
 
       describe('release patch', () => {
-        before(() => {
-          resetVariables();
+        describe('with Github not accessible', () => {
+          before(() => {
+            resetVariables();
 
-          mockFs({
-            'CHANGELOG.md': changelog,
-            'package.json': packageJson,
+            mockRequire('simple-git', createMockGit('devel', true));
+            ReleaseCreator = mockRequire.reRequire('../../services/release-creator');
+
+            mockFs({
+              'CHANGELOG.md': changelog,
+              'package.json': packageJson,
+            });
+
+            new ReleaseCreator(null, { withVersion: true }).perform();
           });
 
-          new ReleaseCreator(null, { withVersion: true }).perform();
+          after(() => {
+            mockFs.restore();
+          });
+
+          it('should throw an error', async () => {
+            await expect(new ReleaseCreator('fake', '😁').perform())
+              .to.be.rejectedWith(GitPullError);
+          });
         });
 
-        after(() => {
-          mockFs.restore();
-        });
+        describe('with Github accessible', () => {
+          before(() => {
+            resetVariables();
 
-        it('should update the CHANGELOG.md', () => {
-          expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
-            `# Changelog
+
+            mockRequire('simple-git', createMockGit('devel'));
+            ReleaseCreator = mockRequire.reRequire('../../services/release-creator');
+
+            mockFs({
+              'CHANGELOG.md': changelog,
+              'package.json': packageJson,
+            });
+
+            new ReleaseCreator(null, { withVersion: true }).perform();
+          });
+
+          after(() => {
+            mockFs.restore();
+          });
+
+          it('should update the CHANGELOG.md', () => {
+            expect(fs.readFileSync('CHANGELOG.md').toString()).equal(
+              `# Changelog
 
 ## [Unreleased]
 
@@ -315,38 +353,39 @@ describe('Services > Release Creator', () => {
 ## RELEASE 2.3.9 - 2019-08-29
 ### Fixed
 - Command Generate - Add support for TIME type.`,
-          );
-        });
+            );
+          });
 
-        it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
-            name: 'lumber-cli',
-            description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
-            version: '2.3.10',
-          }, null, 2));
-        });
+          it('should update the package.json', () => {
+            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+              name: 'lumber-cli',
+              description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
+              version: '2.3.10',
+            }, null, 2));
+          });
 
-        it('should pull and commit changes', () => {
-          expect(pulls[0]).equal('devel');
-          expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 2.3.10');
-          expect(pushes[0]).equal('devel');
-        });
+          it('should pull and commit changes', () => {
+            expect(pulls[0]).equal('devel');
+            expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
+            expect(commitMessage).equal('Release 2.3.10');
+            expect(pushes[0]).equal('devel');
+          });
 
-        it('should merge devel onto master', () => {
-          expect(branches[0]).equal('master');
-          expect(pulls[1]).equal('master');
-          expect(mergeFrom).equal('devel');
-          expect(mergeTo).equal('master');
-          expect(pushes[1]).equal('master');
-        });
+          it('should merge devel onto master', () => {
+            expect(branches[0]).equal('master');
+            expect(pulls[1]).equal('master');
+            expect(mergeFrom).equal('devel');
+            expect(mergeTo).equal('master');
+            expect(pushes[1]).equal('master');
+          });
 
-        it('should get back to devel', () => {
-          expect(currentBranch).equal('devel');
-        });
+          it('should get back to devel', () => {
+            expect(currentBranch).equal('devel');
+          });
 
-        it('should add the correct tag', () => {
-          expect(currentTag).equal('v2.3.10');
+          it('should add the correct tag', () => {
+            expect(currentTag).equal('v2.3.10');
+          });
         });
       });
 
