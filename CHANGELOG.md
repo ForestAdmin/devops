@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.2 - 2019-09-12
 ### Fixed
 - Technical - Fix release script to set the `withVersion` mode.
 - Technical - Fix tests.
