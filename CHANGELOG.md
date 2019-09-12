@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Rename the `publish` command to prevent weird "double publish trial" behaviour. 
 
 ## RELEASE 1.0.2 - 2019-09-12
 ### Fixed

@@ -13,7 +13,7 @@
     "coverage:report:lcov": "./node_modules/nyc/bin/nyc.js report --reporter=lcov",
     "readme:update-coverage": "yarn test:coverage && yarn coverage:report:lcov && node ./scripts/badge-coverage-updater.js",
     "release": "node ./scripts/release.js",
-    "publish": "npm publish --access public"
+    "publish-production": "npm publish --access public"
   },
   "repository": {
     "type": "git",
