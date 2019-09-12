@@ -1,8 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Fix release script to set the `withVersion` mode.
 
-## RELEASE - 2019-09-12
+## RELEASE 1.0.1 - 2019-09-12
 ### Added
 - Technical - Add a `publish` command to publish the package on NPM.
 - Technical - Add a release script.
