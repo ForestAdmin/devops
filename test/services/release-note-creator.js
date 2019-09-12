@@ -153,7 +153,7 @@ describe('Services > Release Note Creator', () => {
 
       expect(slackToken).equal('fake');
       expect(uploadedContent).to.deep.equal({
-        channels: 'CMLBBF6Q3',
+        channels: 'G501BDD5W',
         filename: 'RELEASE 😁 2019-08-23.md',
         filetype: 'post',
         content: '## 🍿 Changed\n- Admin - Upgrade the liana to the latest beta version.\n\n## 💉 Fixed\n- Style - Update style.',
@@ -197,7 +197,7 @@ describe('Services > Release Note Creator', () => {
 
       expect(slackToken).equal('fake');
       expect(uploadedContent).to.deep.equal({
-        channels: 'CMLBBF6Q3',
+        channels: 'G501BDD5W',
         filename: 'RELEASE 😁 2019-08-22.md',
         filetype: 'post',
         content: '# forest-express v3.2.6\n\n## 💉 Fixed\n- Serializer - Fix serialization of records with id 0.',

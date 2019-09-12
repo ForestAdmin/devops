@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Technical - Fix release script to set the `withVersion` mode.
+- Technical - Fix tests.
 
 ## RELEASE 1.0.1 - 2019-09-12
 ### Added
