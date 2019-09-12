@@ -1,7 +1,7 @@
 {
   "name": "@forestadmin/devops",
-  "version": "0.1.0",
-  "description": "",
+  "version": "1.0.0",
+  "description": "Forest Admin internal DevOps toolbox",
   "main": "index.js",
   "type": "module",
   "scripts": {
