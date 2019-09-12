@@ -7,6 +7,7 @@ const {
   SlackConnectionError,
   ProjectIconMissingError,
   WronglyFormattedChangelogError,
+  ChangelogMissingError,
 } = require('../../utils/errors');
 let ReleaseNoteCreator = require('../../services/release-note-creator');
 
@@ -52,9 +53,16 @@ describe('Services > Release Note Creator', () => {
   });
 
   describe('with no CHANGELOG.md', () => {
+    before(() => {
+      mockFs({});
+    });
+
+    after(() => {
+      mockFs.restore();
+    });
+
     it('should throw an error', () => {
-      expect(() => new ReleaseNoteCreator('fake', '😁').perform())
-        .to.throw(WronglyFormattedChangelogError);
+      expect(() => new ReleaseNoteCreator('fake', '😁').perform()).to.throw(ChangelogMissingError);
     });
   });
 

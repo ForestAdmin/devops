@@ -4,6 +4,9 @@
 ### Added
 - Technical - Add a `publish` command to publish the package on NPM.
 
+### Fixed
+- Technical - Fix a test.
+
 ## RELEASE 1.0.0 - 2019-09-12
 ### Added
 - Technical - Setup a minimal tests configuration.
