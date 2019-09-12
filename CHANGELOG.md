@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE - 2019-09-12
 ### Added
 - Technical - Add a `publish` command to publish the package on NPM.
 - Technical - Add a release script.
