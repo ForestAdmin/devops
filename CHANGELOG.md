@@ -6,6 +6,7 @@
 
 ### Fixed
 - Technical - Fix a test.
+- Release Notes - Fix the default Slack channel.
 
 ## RELEASE 1.0.0 - 2019-09-12
 ### Added

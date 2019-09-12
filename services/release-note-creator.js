@@ -18,7 +18,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
     throw new ProjectIconMissingError();
   }
 
-  const channel = options.channel || 'CMLBBF6Q3';
+  const channel = options.channel || 'G501BDD5W';
   const withVersion = options.withVersion || false;
 
   function isNotReleaseTitle(data) {
