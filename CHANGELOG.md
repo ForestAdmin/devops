@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Add a `publish` command to publish the package on NPM.
 
 ## RELEASE 1.0.0 - 2019-09-12
 ### Added

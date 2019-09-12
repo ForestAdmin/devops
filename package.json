@@ -11,7 +11,8 @@
     "coverage:report:html": "./node_modules/nyc/bin/nyc.js report --reporter=html",
     "coverage:report:summary": "./node_modules/nyc/bin/nyc.js report --reporter=text-summary",
     "coverage:report:lcov": "./node_modules/nyc/bin/nyc.js report --reporter=lcov",
-    "readme:update-coverage": "yarn test:coverage && yarn coverage:report:lcov && node ./scripts/badge-coverage-updater.js"
+    "readme:update-coverage": "yarn test:coverage && yarn coverage:report:lcov && node ./scripts/badge-coverage-updater.js",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
