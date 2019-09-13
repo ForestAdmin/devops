@@ -75,9 +75,9 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
     const titleBetter = `RELEASE ${suffixTitle}`;
     let body = changes
       .join('\n')
-      .replace('\n### Added', '## ⭐ Added')
-      .replace('\n### Changed', '## 🍿 Changed')
-      .replace('\n### Fixed', '## 🚒 Fixed');
+      .replace('### Added', '## ⭐ Added')
+      .replace('### Changed', '## 🍿 Changed')
+      .replace('### Fixed', '## 🚒 Fixed');
 
     if (withVersion) {
       const packageJson = getPackageJson();
