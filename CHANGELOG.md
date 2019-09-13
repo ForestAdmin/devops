@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.3 - 2019-09-13
 ### Fixed
 - Technical - Rename the `publish` command to prevent weird "double publish trial" behaviour.
 - Release Command - Fix broken merge on master.
