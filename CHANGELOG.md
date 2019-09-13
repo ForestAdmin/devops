@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Release Note - Improve the release note style.
 
 ## RELEASE 1.0.3 - 2019-09-13
 ### Fixed
