@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 ### Fixed
-- Technical - Rename the `publish` command to prevent weird "double publish trial" behaviour. 
+- Technical - Rename the `publish` command to prevent weird "double publish trial" behaviour.
+- Release Command - Fix broken merge on master.
 
 ## RELEASE 1.0.2 - 2019-09-12
 ### Fixed
