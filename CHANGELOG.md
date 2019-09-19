@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Readme - Rewrite it according to the new functions exposed.
 
 ## RELEASE 2.0.0 - 2019-09-19
 ### Changed

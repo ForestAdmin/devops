@@ -10,30 +10,45 @@ You can create a token by following this link https://api.slack.com/custom-integ
 ### Release
 This process will:
 - merge `devel` into `master` (if necessary),
-- add a specific tag (if necessary)
-- send a note of the changes released to a specific Slack channel.
+- add a specific tag (if necessary).
 
-```JavaScript
+```javascript
+require('dotenv').config();
 import { ReleaseManager } from '@forestadmin/devops';
 
-const slackToken = process.env.DEVOPS_SLACK_TOKEN;
-const releaseIcon = '🌱';
-const options = {};
-
-new ReleaseManager(slackToken, releaseIcon, options).create();
+const OPTIONS = { withVersion: true };
+new ReleaseManager(OPTIONS).create();
 ```
 
 Arguments:
-- `slackToken`: A token that you can get here https://api.slack.com/custom-integrations/legacy-tokens
-- `releaseIcon`: An icon representing the project
 - `options`:
   - `withVersion`: Boolean. True if project has version.
-  - `channel`: String. The slack channel to send to.
+
+### Send a release note
+Sends a note of the changes released to a specific Slack channel.
+
+```javascript
+require('dotenv').config();
+import { ReleaseNoteManager } from '@forestadmin/devops';
+
+const { DEVOPS_SLACK_TOKEN, DEVOPS_SLACK_CHANNEL } = process.env;
+const OPTIONS = { releaseIcon: '🌱', withVersion: true };
+
+new ReleaseNoteManager(DEVOPS_SLACK_TOKEN, DEVOPS_SLACK_CHANNEL, OPTIONS).create();
+```
+
+Arguments:
+- `slackToken`: A Slack token that you can generate here https://api.slack.com/custom-integrations/legacy-tokens.
+- `slackChannel`: A Slack channel identifier to publish.
+- `options`:
+  - `withVersion`: Boolean. True if project has version.
+  - `releaseIcon`: An icon representing the project.
+
 
 ### Update the coverage badge
 This process will update the coverage badge in the `README.md` file base on the `lcov` coverage report.
 
-```JavaScript
+```javascript
 import { CoverageManager } from '@forestadmin/devops';
 
 new CoverageManager().updateBadge();
