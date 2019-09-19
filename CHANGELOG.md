@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.0.0 - 2019-09-19
 ### Changed
 - Release Notes - Change the interface to expose the release note creation script.
 - Release Notes - Small formatting improvements in the published release note.
