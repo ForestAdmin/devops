@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.5 - 2019-09-19
 ### Fixed
 - Coverage - Add a missing dependency.
 
