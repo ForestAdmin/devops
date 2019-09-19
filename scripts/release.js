@@ -1,4 +1,8 @@
 require('dotenv').config(); // eslint-disable-line
-const { ReleaseManager } = require('../index'); // eslint-disable-line
+const { ReleaseManager, ReleaseNoteManager } = require('../index'); // eslint-disable-line
 
-new ReleaseManager(process.env.DEVOPS_SLACK_TOKEN, '🤖', { withVersion: true }).create();
+const { DEVOPS_SLACK_TOKEN, DEVOPS_SLACK_CHANNEL } = process.env;
+const OPTIONS = { releaseIcon: '🤖', withVersion: true };
+
+new ReleaseManager(OPTIONS).create()
+  .then(() => new ReleaseNoteManager(DEVOPS_SLACK_TOKEN, DEVOPS_SLACK_CHANNEL, OPTIONS).create());

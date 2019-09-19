@@ -42,7 +42,8 @@ describe('Services > Release Note Creator', () => {
 
   describe('with no Slack token', () => {
     it('should throw an error', () => {
-      expect(() => new ReleaseNoteCreator(null, '😁')).to.throw(SlackTokenMissingError);
+      expect(() => new ReleaseNoteCreator(null, null, { releaseIcon: '😁' }))
+        .to.throw(SlackTokenMissingError);
     });
   });
 
@@ -62,7 +63,8 @@ describe('Services > Release Note Creator', () => {
     });
 
     it('should throw an error', () => {
-      expect(() => new ReleaseNoteCreator('fake', '😁').perform()).to.throw(ChangelogMissingError);
+      expect(() => new ReleaseNoteCreator('fake', null, { releaseIcon: '😁' }).perform())
+        .to.throw(ChangelogMissingError);
     });
   });
 
@@ -80,7 +82,7 @@ describe('Services > Release Note Creator', () => {
     });
 
     it('should throw a WronglyFormattedChangelogError error', () => {
-      expect(() => new ReleaseNoteCreator('fake', '😁').perform())
+      expect(() => new ReleaseNoteCreator('fake', null, { releaseIcon: '😁' }).perform())
         .to.throw(WronglyFormattedChangelogError);
     });
   });
@@ -106,7 +108,7 @@ describe('Services > Release Note Creator', () => {
     });
 
     it('should set the channel', () => {
-      new ReleaseNoteCreator('fake', '😁', { channel: 'test' })
+      new ReleaseNoteCreator('fake', 'test', { releaseIcon: '😁' })
         .perform();
 
       expect(uploadedContent).to.not.be.undefined;
@@ -148,12 +150,11 @@ describe('Services > Release Note Creator', () => {
     });
 
     it('should send the note correctly formatted to slack', () => {
-      new ReleaseNoteCreator('fake', '😁')
-        .perform();
+      new ReleaseNoteCreator('fake', 'slackChannelCode', { releaseIcon: '😁' }).perform();
 
       expect(slackToken).equal('fake');
       expect(uploadedContent).to.deep.equal({
-        channels: 'G501BDD5W',
+        channels: 'slackChannelCode',
         filename: 'RELEASE 😁 2019-08-23.md',
         filetype: 'post',
         content: '## 🍿 Changed\n- Admin - Upgrade the liana to the latest beta version.\n\n## 🚒 Fixed\n- Style - Update style.',
@@ -192,15 +193,14 @@ describe('Services > Release Note Creator', () => {
     });
 
     it('should send the note correctly formatted to slack', () => {
-      new ReleaseNoteCreator('fake', '😁', { withVersion: true })
-        .perform();
+      new ReleaseNoteCreator('fake', 'slackChannelCode', { releaseIcon: '😁', withVersion: true }).perform();
 
       expect(slackToken).equal('fake');
       expect(uploadedContent).to.deep.equal({
-        channels: 'G501BDD5W',
+        channels: 'slackChannelCode',
         filename: 'RELEASE 😁 2019-08-22.md',
         filetype: 'post',
-        content: '# forest-express v3.2.6\n\n## 🚒 Fixed\n- Serializer - Fix serialization of records with id 0.',
+        content: '**forest-express v3.2.6**\n\n\n## 🚒 Fixed\n- Serializer - Fix serialization of records with id 0.',
       });
     });
   });
@@ -236,7 +236,7 @@ describe('Services > Release Note Creator', () => {
     ReleaseNoteCreator = mockRequire.reRequire('../../services/release-note-creator');
 
     it('should throw a SlackConnectionError error', async () => {
-      await expect(new ReleaseNoteCreator('fake', '😁').perform())
+      await expect(new ReleaseNoteCreator('fake', null, { releaseIcon: '😁' }).perform())
         .to.be.rejectedWith(SlackConnectionError);
     });
   });

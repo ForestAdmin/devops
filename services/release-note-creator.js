@@ -10,15 +10,15 @@ const {
 
 const VERSION_LINE_REGEX = /^## RELEASE (\d+.\d+.\d+(-\w+\.\d+)? )?- .*$/;
 
-function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
+function ReleaseNoteCreator(slackToken, slackChannel, options = {}) {
   if (!slackToken) {
     throw new SlackTokenMissingError();
   }
-  if (!projectIcon) {
+  if (!options.releaseIcon) {
     throw new ProjectIconMissingError();
   }
 
-  const channel = options.channel || 'G501BDD5W';
+  const channel = slackChannel;
   const withVersion = options.withVersion || false;
 
   function isNotReleaseTitle(data) {
@@ -71,7 +71,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
     const { title, changes } = extractLastReleaseTitleAndChanges(data);
 
     const suffixTitle = title.substring(title.indexOf(' - '))
-      .replace(' - ', `${projectIcon} `);
+      .replace(' - ', `${options.releaseIcon} `);
     const titleBetter = `RELEASE ${suffixTitle}`;
     let body = changes
       .join('\n')
@@ -81,7 +81,7 @@ function ReleaseNoteCreator(slackToken, projectIcon, options = {}) {
 
     if (withVersion) {
       const packageJson = getPackageJson();
-      body = `# ${packageJson.name} v${packageJson.version}\n\n${body}`;
+      body = `**${packageJson.name} v${packageJson.version}**\n\n\n${body}`;
     }
 
     return { title: titleBetter, body };
