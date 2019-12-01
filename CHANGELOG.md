@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Upgrade `eslint` devDependency.
+
 ### Fixed
 - Readme - Rewrite it according to the new functions exposed.
 

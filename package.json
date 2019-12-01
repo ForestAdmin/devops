@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js ./services ./utils ./test",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js scripts services test utils",
     "test": "./node_modules/mocha/bin/mocha test/**",
     "test:coverage": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha test/**",
     "coverage:report:html": "./node_modules/nyc/bin/nyc.js report --reporter=html",
@@ -42,7 +42,7 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "dotenv": "8.1.0",
-    "eslint": "6.3.0",
+    "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
     "mocha": "6.2.0",
