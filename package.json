@@ -3,7 +3,6 @@
   "version": "2.0.1",
   "description": "Forest Admin internal DevOps toolbox",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js scripts services test utils",
     "test": "./node_modules/mocha/bin/mocha test/**",
@@ -12,7 +11,8 @@
     "coverage:report:summary": "./node_modules/nyc/bin/nyc.js report --reporter=text-summary",
     "coverage:report:lcov": "./node_modules/nyc/bin/nyc.js report --reporter=lcov",
     "readme:update-coverage": "yarn test:coverage && yarn coverage:report:lcov && node ./scripts/badge-coverage-updater.js",
-    "release": "node ./scripts/release.js"
+    "release": "node ./scripts/release.js",
+    "updateClickupStatus": "node scripts/update-clickup-status.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/ForestAdmin/automatic-release-note#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "@slack/client": "5.0.2",
     "chalk": "2.4.2",
     "lcov-parse": "1.0.0",
