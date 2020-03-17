@@ -6,6 +6,7 @@
 
 ### Fixed
 - Readme - Rewrite it according to the new functions exposed.
+- Release Creation - Add a new line at the end of `package.json` to avoid yarn conflicts.
 
 ## RELEASE 2.0.0 - 2019-09-19
 ### Changed
