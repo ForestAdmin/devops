@@ -14,7 +14,12 @@ function getPackageJson() {
   return JSON.parse(packageContents);
 }
 
+function packageJsonFileContent(packageJson) {
+  return JSON.stringify(packageJson, null, 2).concat('\n');
+}
+
 module.exports = {
   getLinesOfChangelog,
   getPackageJson,
+  packageJsonFileContent,
 };

@@ -4,6 +4,7 @@ const simpleGit = require('simple-git')();
 const semver = require('semver');
 const { getLinesOfChangelog, getPackageJson } = require('../utils/project-file-utils');
 const { GitPullError } = require('../utils/errors');
+const { packageJsonFileContent } = require('../utils/project-file-utils');
 
 const BRANCH_MASTER = 'master';
 const BRANCH_DEVEL = 'devel';
@@ -89,7 +90,7 @@ function ReleaseCreator(argv, options = {}) {
       const packageJson = getPackageJson();
       version = semver.inc(packageJson.version, releaseType, prereleaseTag);
       packageJson.version = version;
-      newVersionFile = JSON.stringify(packageJson, null, 2);
+      newVersionFile = packageJsonFileContent(packageJson);
     }
 
     // CHANGELOG
