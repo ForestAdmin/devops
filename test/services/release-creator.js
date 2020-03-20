@@ -7,6 +7,7 @@ const {
   ChangelogMissingError,
   GitPullError,
 } = require('../../utils/errors');
+const { packageJsonFileContent } = require('../../utils/project-file-utils');
 let ReleaseCreator = require('../../services/release-creator');
 
 const { expect } = chai;
@@ -357,11 +358,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.10',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -425,11 +426,11 @@ describe('Services > Release Creator', () => {
         });
 
         it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+          expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
             name: 'lumber-cli',
             description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
             version: '2.4.0',
-          }, null, 2));
+          }));
         });
 
         it('should pull and commit changes', () => {
@@ -492,11 +493,11 @@ describe('Services > Release Creator', () => {
         });
 
         it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+          expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
             name: 'lumber-cli',
             description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
             version: '3.0.0',
-          }, null, 2));
+          }));
         });
 
         it('should pull and commit changes', () => {
@@ -576,11 +577,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.9-beta.1',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -640,11 +641,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.9-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -706,11 +707,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.10-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -770,11 +771,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.10-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -836,11 +837,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.4.0-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -900,11 +901,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.4.0-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -966,11 +967,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '3.0.0-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1030,11 +1031,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '3.0.0-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1104,11 +1105,11 @@ describe('Services > Release Creator', () => {
         });
 
         it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+          expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
             name: 'lumber-cli',
             description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
             version: '2.3.10',
-          }, null, 2));
+          }));
         });
 
         it('should pull and commit changes', () => {
@@ -1167,11 +1168,11 @@ describe('Services > Release Creator', () => {
         });
 
         it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+          expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
             name: 'lumber-cli',
             description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
             version: '2.4.0',
-          }, null, 2));
+          }));
         });
 
         it('should pull and commit changes', () => {
@@ -1230,11 +1231,11 @@ describe('Services > Release Creator', () => {
         });
 
         it('should update the package.json', () => {
-          expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+          expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
             name: 'lumber-cli',
             description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
             version: '3.0.0',
-          }, null, 2));
+          }));
         });
 
         it('should pull and commit changes', () => {
@@ -1312,11 +1313,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.9-beta.1',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1376,11 +1377,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.9-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1442,11 +1443,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.10-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1506,11 +1507,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.3.10-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1572,11 +1573,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.4.0-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1636,11 +1637,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '2.4.0-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1702,11 +1703,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '3.0.0-beta.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {
@@ -1766,11 +1767,11 @@ describe('Services > Release Creator', () => {
           });
 
           it('should update the package.json', () => {
-            expect(fs.readFileSync('package.json').toString()).equal(JSON.stringify({
+            expect(fs.readFileSync('package.json').toString()).equal(packageJsonFileContent({
               name: 'lumber-cli',
               description: 'Create your backend application in minutes. GraphQL API backend based on a database schema',
               version: '3.0.0-alpha.0',
-            }, null, 2));
+            }));
           });
 
           it('should pull and commit changes', () => {

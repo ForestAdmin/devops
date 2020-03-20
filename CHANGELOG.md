@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Upgrade `eslint` devDependency.
+- Technical - Add a new line at the end of the generated `package.json` file when releasing a new version.
 
 ### Fixed
 - Readme - Rewrite it according to the new functions exposed.
