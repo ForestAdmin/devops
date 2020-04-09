@@ -39,12 +39,15 @@
     "simple-git": "1.78.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "dotenv": "8.1.0",
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
+    "husky": "4.2.4",
     "mocha": "6.2.0",
     "mock-fs": "4.10.1",
     "mock-require": "3.0.3",

@@ -7,6 +7,7 @@
 ### Changed
 - Technical - Upgrade `eslint` devDependency.
 - Technical - Add a new line at the end of the generated `package.json` file when releasing a new version.
+- Technical - Introduce conventional commits.
 
 ### Fixed
 - Readme - Rewrite it according to the new functions exposed.
