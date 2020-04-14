@@ -11,6 +11,7 @@
 
 ### Fixed
 - Readme - Rewrite it according to the new functions exposed.
+- Technical - Adapt release manager to conventional commits.
 
 ## RELEASE 2.0.0 - 2019-09-19
 ### Changed
