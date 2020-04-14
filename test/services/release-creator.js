@@ -174,7 +174,7 @@ describe('Services > Release Creator', () => {
       it('should pull and commit changes', () => {
         expect(pulls[0]).equal('devel');
         expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-        expect(commitMessage).equal('Release - 2019-08-31');
+        expect(commitMessage).equal('chore(release): 2019-08-31');
         expect(pushes[0]).equal('devel');
       });
 
@@ -249,7 +249,7 @@ describe('Services > Release Creator', () => {
         expect(branches[0]).equal('devel');
         expect(pulls[0]).equal('devel');
         expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-        expect(commitMessage).equal('Release - 2019-08-31');
+        expect(commitMessage).equal('chore(release): 2019-08-31');
         expect(pushes[0]).equal('devel');
       });
 
@@ -368,7 +368,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.10');
+            expect(commitMessage).equal('chore(release): 2.3.10');
             expect(pushes[0]).equal('devel');
           });
 
@@ -436,7 +436,7 @@ describe('Services > Release Creator', () => {
         it('should pull and commit changes', () => {
           expect(pulls[0]).equal('devel');
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 2.4.0');
+          expect(commitMessage).equal('chore(release): 2.4.0');
           expect(pushes[0]).equal('devel');
         });
 
@@ -503,7 +503,7 @@ describe('Services > Release Creator', () => {
         it('should pull and commit changes', () => {
           expect(pulls[0]).equal('devel');
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 3.0.0');
+          expect(commitMessage).equal('chore(release): 3.0.0');
           expect(pushes[0]).equal('devel');
         });
 
@@ -587,7 +587,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.9-beta.1');
+            expect(commitMessage).equal('chore(release): 2.3.9-beta.1');
             expect(pushes[0]).equal('devel');
           });
 
@@ -651,7 +651,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.9-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.3.9-alpha.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -717,7 +717,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.10-beta.0');
+            expect(commitMessage).equal('chore(release): 2.3.10-beta.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -781,7 +781,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.10-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.3.10-alpha.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -847,7 +847,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.4.0-beta.0');
+            expect(commitMessage).equal('chore(release): 2.4.0-beta.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -911,7 +911,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.4.0-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.4.0-alpha.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -977,7 +977,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 3.0.0-beta.0');
+            expect(commitMessage).equal('chore(release): 3.0.0-beta.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -1041,7 +1041,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('devel');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 3.0.0-alpha.0');
+            expect(commitMessage).equal('chore(release): 3.0.0-alpha.0');
             expect(pushes[0]).equal('devel');
           });
 
@@ -1115,7 +1115,7 @@ describe('Services > Release Creator', () => {
         it('should pull and commit changes', () => {
           expect(pulls[0]).equal('v4');
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 2.3.10');
+          expect(commitMessage).equal('chore(release): 2.3.10');
           expect(pushes[0]).equal('v4');
         });
 
@@ -1178,7 +1178,7 @@ describe('Services > Release Creator', () => {
         it('should pull and commit changes', () => {
           expect(pulls[0]).equal('v4');
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 2.4.0');
+          expect(commitMessage).equal('chore(release): 2.4.0');
           expect(pushes[0]).equal('v4');
         });
 
@@ -1241,7 +1241,7 @@ describe('Services > Release Creator', () => {
         it('should pull and commit changes', () => {
           expect(pulls[0]).equal('v4');
           expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-          expect(commitMessage).equal('Release 3.0.0');
+          expect(commitMessage).equal('chore(release): 3.0.0');
           expect(pushes[0]).equal('v4');
         });
 
@@ -1323,7 +1323,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.9-beta.1');
+            expect(commitMessage).equal('chore(release): 2.3.9-beta.1');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1387,7 +1387,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.9-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.3.9-alpha.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1453,7 +1453,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.10-beta.0');
+            expect(commitMessage).equal('chore(release): 2.3.10-beta.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1517,7 +1517,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.3.10-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.3.10-alpha.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1583,7 +1583,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.4.0-beta.0');
+            expect(commitMessage).equal('chore(release): 2.4.0-beta.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1647,7 +1647,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 2.4.0-alpha.0');
+            expect(commitMessage).equal('chore(release): 2.4.0-alpha.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1713,7 +1713,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 3.0.0-beta.0');
+            expect(commitMessage).equal('chore(release): 3.0.0-beta.0');
             expect(pushes[0]).equal('v4');
           });
 
@@ -1777,7 +1777,7 @@ describe('Services > Release Creator', () => {
           it('should pull and commit changes', () => {
             expect(pulls[0]).equal('v4');
             expect(filesAdded).to.deep.equal(['CHANGELOG.md', 'package.json']);
-            expect(commitMessage).equal('Release 3.0.0-alpha.0');
+            expect(commitMessage).equal('chore(release): 3.0.0-alpha.0');
             expect(pushes[0]).equal('v4');
           });
 

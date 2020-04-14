@@ -101,7 +101,7 @@ function ReleaseCreator(argv, options = {}) {
     changes.splice(index, 0, `\n## RELEASE ${withVersion ? `${version} ` : ''}- ${today}`);
     const newChanges = changes.join('\n');
 
-    const commitMessage = withVersion ? `Release ${version}` : `Release - ${today}`;
+    const commitMessage = `chore(release): ${withVersion ? version : today}`;
     const tag = version ? `v${version}` : null;
 
     return new Promise((resolve) => {
