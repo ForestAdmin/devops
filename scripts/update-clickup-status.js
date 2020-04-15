@@ -28,17 +28,23 @@ async function updateStatusIfNecessary(taskId, currentStatus, targetStatus) {
   const targetStatusOrder = statusPriorities.indexOf(targetStatus);
 
   if (currentStatusOrder < targetStatusOrder) {
-    await axios({
-      method: 'PUT',
-      url: `https://api.clickup.com/api/v2/task/${taskId}`,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: process.env.CLICKUP_API_KEY,
-      },
-      data: {
-        status: targetStatus,
-      },
-    });
+    try {
+      await axios({
+        method: 'PUT',
+        url: `https://api.clickup.com/api/v2/task/${taskId}`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: process.env.CLICKUP_API_KEY,
+        },
+        data: {
+          status: targetStatus,
+        },
+      });
+    } catch (error) {
+      console.error('Could not update status of task:', taskId);
+      console.error(error);
+      return false;
+    }
 
     return true;
   }
@@ -97,15 +103,21 @@ function containsClikUpTagId(title) {
 }
 
 async function fetchTask(taskId, withSubTasks = false) {
-  const response = await axios({
-    method: 'GET',
-    url: `https://api.clickup.com/api/v2/task/${taskId}${withSubTasks ? '?subtasks=true' : ''}`,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: process.env.CLICKUP_API_KEY,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `https://api.clickup.com/api/v2/task/${taskId}${withSubTasks ? '?subtasks=true' : ''}`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: process.env.CLICKUP_API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Could not fetch task:', taskId, withSubTasks ? ' with sub tasks ' : '');
+    console.error(error);
+    return null;
+  }
 }
 
 function getLowestPriorityStatus(tasks) {
@@ -145,6 +157,8 @@ if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)
 
   fetchTask(clickUpTaskId)
     .then(async (task) => {
+      if (!task) return;
+
       const wasUpdated = await updateStatusIfNecessary(
         clickUpTaskId,
         task.status.status,
@@ -172,6 +186,8 @@ if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)
       const taskId = getClickUpTaskIdFromTitle(commit.message);
       fetchTask(taskId, true)
         .then(async (task) => {
+          if (!task) return;
+
           await updateStatusIfNecessary(
             task.id,
             task.status.status,
