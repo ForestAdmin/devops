@@ -17,8 +17,8 @@ const statusPriorities = [
 ];
 
 function printError(error) {
-  if (error && error.data && error.data.err) {
-    console.error('Cause:', error.data.err);
+  if (error && error.response && error.response.data && error.response.data.err) {
+    console.error('Cause:', error.response.data.err);
   } else {
     console.error(error);
   }
