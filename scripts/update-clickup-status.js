@@ -16,6 +16,14 @@ const statusPriorities = [
   'closed',
 ];
 
+function printError(error) {
+  if (error && error.data && error.data.err) {
+    console.error('Cause:', error.data.err);
+  } else {
+    console.error(error);
+  }
+}
+
 function getClickUpTaskIdFromTitle(pullRequestTitle) {
   const index = pullRequestTitle.indexOf('(#') + 2;
 
@@ -42,7 +50,7 @@ async function updateStatusIfNecessary(taskId, currentStatus, targetStatus) {
       });
     } catch (error) {
       console.error('Could not update status of task:', taskId);
-      console.error(error);
+      printError(error);
       return false;
     }
 
@@ -115,7 +123,7 @@ async function fetchTask(taskId, withSubTasks = false) {
     return response.data;
   } catch (error) {
     console.error('Could not fetch task:', taskId, withSubTasks ? ' with sub tasks ' : '');
-    console.error(error);
+    printError(error);
     return null;
   }
 }
