@@ -5,20 +5,29 @@ const axios = require('axios');
 const file = fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
 const eventPayload = JSON.parse(file);
 
-const statusPriorities = [
-  'to do',
-  'doing',
-  'waiting for review',
-  'in functionnal test',
-  'in code review',
-  'to release',
-  'released',
-  'closed',
+const TODO_STATUS = '📦TO DO';
+const DOING_STATUS = '✍️DOING';
+const WAITING_FOR_REVIEW_STATUS = '✋WAITING FOR REVIEW';
+const IN_FUNCTIONAL_TEST_STATUS = '👮🏻‍♂️IN FUNCTIONAL TEST';
+const IN_CODE_REVIEW_STATUS = '👮🏻‍♂️IN CODE REVIEW';
+const TO_RELEASE_STATUS = '🚀TO RELEASE';
+const RELEASED_STATUS = '🏁RELEASED';
+const CLOSED_STATUS = '👻CLOSED';
+
+const STATUS_PRIORITIES = [
+  TODO_STATUS,
+  DOING_STATUS,
+  WAITING_FOR_REVIEW_STATUS,
+  IN_FUNCTIONAL_TEST_STATUS,
+  IN_CODE_REVIEW_STATUS,
+  TO_RELEASE_STATUS,
+  RELEASED_STATUS,
+  CLOSED_STATUS,
 ];
 
 function printError(error) {
   if (error && error.response && error.response.data && error.response.data.err) {
-    console.error('Cause:', error.response.data.err);
+    console.error('  Cause:', error.response.data.err);
   } else {
     console.error(error);
   }
@@ -32,8 +41,8 @@ function getClickUpTaskIdFromTitle(pullRequestTitle) {
 }
 
 async function updateStatusIfNecessary(taskId, currentStatus, targetStatus) {
-  const currentStatusOrder = statusPriorities.indexOf(currentStatus);
-  const targetStatusOrder = statusPriorities.indexOf(targetStatus);
+  const currentStatusOrder = STATUS_PRIORITIES.indexOf(currentStatus);
+  const targetStatusOrder = STATUS_PRIORITIES.indexOf(targetStatus);
 
   if (currentStatusOrder < targetStatusOrder) {
     try {
@@ -135,8 +144,8 @@ function getLowestPriorityStatus(tasks) {
     if (!lowestPriorityStatus) {
       lowestPriorityStatus = task.status.status;
     } else {
-      const statusPriority = statusPriorities.indexOf(task.status.status);
-      const lowestStatusPriority = statusPriorities.indexOf(lowestPriorityStatus);
+      const statusPriority = STATUS_PRIORITIES.indexOf(task.status.status);
+      const lowestStatusPriority = STATUS_PRIORITIES.indexOf(lowestPriorityStatus);
       if (statusPriority < lowestStatusPriority) {
         lowestPriorityStatus = task.status.status;
       }
@@ -149,17 +158,17 @@ function getLowestPriorityStatus(tasks) {
 if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)) {
   const clickUpTaskId = getClickUpTaskIdFromTitle(eventPayload.pull_request.title);
 
-  let targetStatus = 'doing';
+  let targetStatus = DOING_STATUS;
   if (isWaitingForReview()) {
-    targetStatus = 'waiting for review';
+    targetStatus = WAITING_FOR_REVIEW_STATUS;
 
     if (isInCodeReview()) {
-      targetStatus = 'in code review';
+      targetStatus = IN_CODE_REVIEW_STATUS;
     }
   }
 
   if (isApproved()) {
-    targetStatus = 'to release';
+    targetStatus = TO_RELEASE_STATUS;
   }
 
 
@@ -199,7 +208,7 @@ if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)
           await updateStatusIfNecessary(
             task.id,
             task.status.status,
-            'released',
+            RELEASED_STATUS,
           );
 
           if (task.substasks) {
@@ -207,7 +216,7 @@ if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)
               updateStatusIfNecessary(
                 subtask.id,
                 subtask.status.status,
-                'released',
+                RELEASED_STATUS,
               );
             });
           }
