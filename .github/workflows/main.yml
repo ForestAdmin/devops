@@ -1,0 +1,22 @@
+name: A workflow to update click up tasks status
+on:
+  pull_request:
+  pull_request_review:
+  push:
+    branches:
+      - master
+
+jobs:
+  update_clickup_status:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - run: yarn install
+    - run: yarn run updateClickupStatus
+      env:
+        CLICKUP_API_KEY: ${{ secrets.CLICKUP_API_KEY }}
