@@ -1,10 +1,6 @@
 const fs = require('fs');
 const axios = require('axios');
 
-// NOTICE: GITHUB_EVENT_PATH is a path to a file where the current event payload is stored.
-const file = fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
-const eventPayload = JSON.parse(file);
-
 const TODO_STATUS = '📦TO DO';
 const DOING_STATUS = '✍️DOING';
 const WAITING_FOR_REVIEW_STATUS = '✋WAITING FOR REVIEW';
@@ -26,6 +22,11 @@ const STATUS_PRIORITIES = [
 ];
 
 function ClickUpStatusUpdater() {
+  // NOTICE: GITHUB_EVENT_PATH is a path to a file where the current event payload is stored.
+  const file = fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
+  const eventPayload = JSON.parse(file);
+
+
   function printError(error) {
     if (error && error.response && error.response.data && error.response.data.err) {
       console.error('  Cause:', error.response.data.err);
