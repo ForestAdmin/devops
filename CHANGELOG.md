@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.0 - 2020-04-17
 ### Added
 - Technical - Automatically update status of clickup tasks.
 
