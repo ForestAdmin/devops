@@ -42,8 +42,8 @@ function ClickUpStatusUpdater() {
   }
 
   async function updateStatusIfNecessary(taskId, currentStatus, targetStatus) {
-    const currentStatusOrder = STATUS_PRIORITIES.indexOf(currentStatus);
-    const targetStatusOrder = STATUS_PRIORITIES.indexOf(targetStatus);
+    const currentStatusOrder = STATUS_PRIORITIES.indexOf(currentStatus.toUpperCase());
+    const targetStatusOrder = STATUS_PRIORITIES.indexOf(targetStatus.toUpperCase());
 
     if (currentStatusOrder < targetStatusOrder) {
       try {
