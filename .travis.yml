@@ -7,7 +7,12 @@ node_js: lts/*
 install:
   - yarn install
 
-script:
-  - commitlint-travis
-  - npm run lint
-  - npm run test
+stages:
+  - "lint & test"
+
+jobs:
+  include:
+    - stage: "lint & test"
+      script: commitlint-travis
+      script: yarn lint
+      script: yarn test

@@ -4,6 +4,7 @@
 ### Changed
 - Technical - Use Node LTS version to run CI jobs.
 - Technical - Get rid of useless CI configuration (environment and notifications).
+- Technical - Parallelize lint and test CI jobs.
 
 ## RELEASE 2.1.0 - 2020-04-17
 ### Added
