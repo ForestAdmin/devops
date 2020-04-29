@@ -2,12 +2,6 @@ sudo: required
 
 language: node_js
 
-
-env:
-  - NODE_ENV=travis
-
-notifications:
-  webhooks: https://files-aopiaslhxw.now.sh
 node_js: lts/*
 
 install:
