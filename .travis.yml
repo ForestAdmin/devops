@@ -2,14 +2,14 @@ language: node_js
 node_js: lts/*
 
 stages:
-  - "lint & test"
+  - Lint & Tests
 
 jobs:
   include:
-    - stage: "lint & test"
-      name: "Lint commit messages"
+    - stage: Lint & Tests
+      name: Lint commit messages
       script: commitlint-travis
     - script: yarn lint
-      name: "ESLint JavaScript code"
+      name: Lint JavaScript
     - script: yarn test
-      name: "Run tests"
+      name: Tests
