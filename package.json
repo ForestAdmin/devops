@@ -50,7 +50,7 @@
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
     "husky": "4.2.4",
-    "mocha": "6.2.0",
+    "mocha": "6.2.3",
     "mock-fs": "4.10.1",
     "mock-require": "3.0.3",
     "nyc": "14.1.1",
