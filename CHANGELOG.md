@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.2...v2.1.3) (2020-05-12)
+
+
+### Bug Fixes
+
+* **security:** patch newly detected dependencies vulnerabilities ([067550e](https://github.com/ForestAdmin/automatic-release-note/commit/067550e2e2485e436ac5fccffff41680bc10d211))
+
 ## [2.1.2](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.1...v2.1.2) (2020-05-12)
 
 
