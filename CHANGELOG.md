@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.1.1 - 2020-05-12
 ### Changed
 - Technical - Use Node LTS version to run CI jobs.
 - Technical - Get rid of useless CI configuration (environment, notifications and install).
