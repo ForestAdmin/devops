@@ -1,20 +1,15 @@
-sudo: required
-
 language: node_js
+node_js: lts/*
 
-node_js:
-  - 11.14.0
+stages:
+  - Lint & Tests
 
-env:
-  - NODE_ENV=travis
-
-notifications:
-  webhooks: https://files-aopiaslhxw.now.sh
-
-install:
-  - yarn install
-
-script:
-  - commitlint-travis
-  - npm run lint
-  - npm run test
+jobs:
+  include:
+    - stage: Lint & Tests
+      name: Lint commit messages
+      script: commitlint-travis
+    - script: yarn lint
+      name: Lint JavaScript
+    - script: yarn test
+      name: Tests

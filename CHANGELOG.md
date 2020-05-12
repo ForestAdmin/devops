@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Use Node LTS version to run CI jobs.
+- Technical - Get rid of useless CI configuration (environment, notifications and install).
+- Technical - Parallelize lint and test CI jobs.
+- Technical - Remove unused `sudo` CI configuration.
 
 ## RELEASE 2.1.0 - 2020-04-17
 ### Added
