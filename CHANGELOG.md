@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.1...v2.1.2) (2020-05-12)
+
+
+### Bug Fixes
+
+* **security:** patch newly detected dependencies vulnerabilities ([0072739](https://github.com/ForestAdmin/automatic-release-note/commit/007273991bad3474971ca81e94a6b91b6dce78a6))
+
 ## RELEASE 2.1.1 - 2020-05-12
 ### Changed
 - Technical - Use Node LTS version to run CI jobs.
