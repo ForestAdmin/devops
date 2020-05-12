@@ -3,6 +3,7 @@ node_js: lts/*
 
 stages:
   - Lint & Tests
+  - Build & Publish
 
 jobs:
   include:
@@ -13,3 +14,11 @@ jobs:
       name: Lint JavaScript
     - script: yarn test
       name: Tests
+    - stage: Build & Publish
+      if: branch = master AND type != pull_request
+      script: skip
+      deploy:
+        provider: script
+        on:
+          branch: master
+        script: yarn && npx semantic-release

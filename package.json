@@ -11,7 +11,6 @@
     "coverage:report:summary": "./node_modules/nyc/bin/nyc.js report --reporter=text-summary",
     "coverage:report:lcov": "./node_modules/nyc/bin/nyc.js report --reporter=lcov",
     "readme:update-coverage": "yarn test:coverage && yarn coverage:report:lcov && node ./scripts/badge-coverage-updater.js",
-    "release": "node ./scripts/release.js",
     "updateClickupStatus": "node scripts/update-clickup-status.js"
   },
   "repository": {
@@ -43,9 +42,10 @@
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.3.4",
     "@commitlint/travis-cli": "8.3.5",
+    "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/git": "9.0.0",
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
-    "dotenv": "8.1.0",
     "eslint": "6.7.2",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
@@ -53,6 +53,8 @@
     "mocha": "6.2.0",
     "mock-fs": "4.10.1",
     "mock-require": "3.0.3",
-    "nyc": "14.1.1"
+    "nyc": "14.1.1",
+    "semantic-release": "17.0.7",
+    "semantic-release-slack-bot": "1.6.2"
   }
 }
