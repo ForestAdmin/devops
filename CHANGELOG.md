@@ -1,3 +1,14 @@
+# [3.0.0](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.3...v3.0.0) (2020-05-20)
+
+
+* refactor(release)!: drop release services (#17) ([392143e](https://github.com/ForestAdmin/automatic-release-note/commit/392143ebe5a03285f36d7835959526d1975e166d)), closes [#17](https://github.com/ForestAdmin/automatic-release-note/issues/17)
+
+
+### BREAKING CHANGES
+
+* ReleaseManager and ReleaseNoteManager have been removed
+in favor of semantic release usage.
+
 ## [2.1.3](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.2...v2.1.3) (2020-05-12)
 
 
