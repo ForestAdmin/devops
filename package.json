@@ -4,7 +4,7 @@
   "description": "Forest Admin internal DevOps toolbox",
   "main": "index.js",
   "scripts": {
-    "lint": "./node_modules/eslint/bin/eslint.js ./*.js scripts services test utils",
+    "lint": "./node_modules/eslint/bin/eslint.js ./*.js scripts services test",
     "test": "./node_modules/mocha/bin/mocha test/**",
     "test:coverage": "./node_modules/nyc/bin/nyc.js ./node_modules/mocha/bin/mocha test/**",
     "coverage:report:html": "./node_modules/nyc/bin/nyc.js report --reporter=html",
@@ -30,13 +30,8 @@
   },
   "homepage": "https://github.com/ForestAdmin/automatic-release-note#readme",
   "dependencies": {
-    "axios": "^0.19.2",
-    "@slack/client": "5.0.2",
-    "chalk": "2.4.2",
-    "lcov-parse": "1.0.0",
-    "moment": "2.24.0",
-    "semver": "6.3.0",
-    "simple-git": "1.78.0"
+    "axios": "0.19.2",
+    "lcov-parse": "1.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
@@ -52,7 +47,6 @@
     "husky": "4.2.4",
     "mocha": "6.2.3",
     "mock-fs": "4.10.1",
-    "mock-require": "3.0.3",
     "nyc": "14.1.1",
     "semantic-release": "17.0.7",
     "semantic-release-slack-bot": "1.6.2"
