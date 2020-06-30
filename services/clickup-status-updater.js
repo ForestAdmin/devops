@@ -36,7 +36,7 @@ function ClickUpStatusUpdater() {
   }
 
   function getClickUpTaskIdFromTitle(pullRequestTitle) {
-    const index = pullRequestTitle.indexOf('(#') + 2;
+    const index = pullRequestTitle.indexOf('(CU-') + 4;
 
     const clickUpTag = pullRequestTitle.substring(index);
     return clickUpTag.substring(0, clickUpTag.indexOf(')'));
@@ -118,7 +118,7 @@ function ClickUpStatusUpdater() {
   }
 
   function containsClikUpTagId(title) {
-    return /\(#\w{6,}\)/gm.test(title);
+    return /\(CU-\w{6,}\)/gm.test(title);
   }
 
   async function fetchTask(taskId, withSubTasks = false) {
