@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/ForestAdmin/automatic-release-note/compare/v3.0.0...v3.0.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* **click up:** fix click up tag id detection ([#19](https://github.com/ForestAdmin/automatic-release-note/issues/19)) ([e8e5991](https://github.com/ForestAdmin/automatic-release-note/commit/e8e5991742051be9ef3a711c4e1f60fcbd8d66f6))
+
 # [3.0.0](https://github.com/ForestAdmin/automatic-release-note/compare/v2.1.3...v3.0.0) (2020-05-20)
 
 
