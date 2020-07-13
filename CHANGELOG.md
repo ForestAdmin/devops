@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/ForestAdmin/automatic-release-note/compare/v3.0.1...v3.0.2) (2020-07-13)
+
+
+### Bug Fixes
+
+* **vulnerabilities:** bump 2 dependencies of dependencies ([#22](https://github.com/ForestAdmin/automatic-release-note/issues/22)) ([3d12045](https://github.com/ForestAdmin/automatic-release-note/commit/3d12045e1592389914deaec677897b2b377eb6f7))
+
 ## [3.0.1](https://github.com/ForestAdmin/automatic-release-note/compare/v3.0.0...v3.0.1) (2020-06-30)
 
 
