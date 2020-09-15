@@ -5,10 +5,12 @@ module.exports = {
     mocha: true,
   },
   plugins: [
+    'jest',
     'sonarjs',
   ],
   extends: [
     'airbnb-base',
+    'plugin:jest/all',
     'plugin:sonarjs/recommended',
   ],
   globals: {

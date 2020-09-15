@@ -1,10 +1,6 @@
 const fs = require('fs');
 const mockFs = require('mock-fs');
-const chai = require('chai');
-chai.use(require('chai-as-promised'));
 const BadgeCoverageUpdater = require('../../services/badge-coverage-updater');
-
-const { expect } = chai;
 
 const FILE_README = `# Random Package
 ![Coverage](https://img.shields.io/badge/coverage-99%25%0A-success)
@@ -69,45 +65,37 @@ BRH:3
 end_of_record
 `;
 
-describe('Service > Badge Coverage Updater', () => {
+describe('service > badge coverage updater', () => {
   describe('without coverage/lcov.info file', () => {
-    before(() => {
+    it('should set the badge value to "unknown" with "critical" color', async () => {
+      expect.assertions(1);
       mockFs({
         'README.md': FILE_README,
       });
-    });
 
-    after(() => {
-      mockFs.restore();
-    });
-
-    it('should set the badge value to "unknown" with "critical" color', async () => {
       await new BadgeCoverageUpdater().perform();
-      expect(fs.readFileSync('README.md').toString()).equal(`# Random Package
+      expect(fs.readFileSync('README.md').toString()).toStrictEqual(`# Random Package
 ![Coverage](https://img.shields.io/badge/coverage-unknown-critical)
 `);
+      mockFs.restore();
     });
   });
 
   describe('with a coverage/lcov.info file that describe a 96% coverage', () => {
-    before(() => {
+    it('should set the badge value to "96" with "important" color', async () => {
+      expect.assertions(1);
       mockFs({
         'README.md': FILE_README,
         coverage: {
           'lcov.info': FILE_LCOV,
         },
       });
-    });
 
-    after(() => {
-      mockFs.restore();
-    });
-
-    it('should set the badge value to "96" with "important" color', async () => {
       await new BadgeCoverageUpdater().perform();
-      expect(fs.readFileSync('README.md').toString()).equal(`# Random Package
+      expect(fs.readFileSync('README.md').toString()).toStrictEqual(`# Random Package
 ![Coverage](https://img.shields.io/badge/coverage-96%25%0A-important)
 `);
+      mockFs.restore();
     });
   });
 });
