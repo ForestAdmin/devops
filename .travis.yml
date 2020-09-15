@@ -1,6 +1,11 @@
 language: node_js
 node_js: lts/*
 
+# NOTICE: Handles code coverage reporting to Code Climate
+before_install:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+
 stages:
   - Lint & Tests
   - Build & Publish
@@ -12,8 +17,10 @@ jobs:
       script: commitlint-travis
     - script: yarn lint
       name: Lint JavaScript
-    - script: yarn test
+    - script: yarn test:coverage
       name: Tests
+      after_script:
+        - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
     - stage: Build & Publish
       if: branch = master AND type != pull_request
       script: skip
