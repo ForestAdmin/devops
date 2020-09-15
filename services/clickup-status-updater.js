@@ -157,21 +157,24 @@ function ClickUpStatusUpdater() {
     return lowestPriorityStatus;
   }
 
+  function getTargetedInProgressStatus() {
+    if (isApproved()) {
+      return TO_RELEASE_STATUS;
+    }
+
+    if (isWaitingForReview()) {
+      if (isInCodeReview()) {
+        return IN_CODE_REVIEW_STATUS;
+      }
+      return WAITING_FOR_REVIEW_STATUS;
+    }
+
+    return DOING_STATUS;
+  }
+
   function updateTaskInProgressStatus() {
     const clickUpTaskId = getClickUpTaskIdFromTitle(eventPayload.pull_request.title);
-
-    let targetStatus = DOING_STATUS;
-    if (isWaitingForReview()) {
-      targetStatus = WAITING_FOR_REVIEW_STATUS;
-
-      if (isInCodeReview()) {
-        targetStatus = IN_CODE_REVIEW_STATUS;
-      }
-    }
-
-    if (isApproved()) {
-      targetStatus = TO_RELEASE_STATUS;
-    }
+    const targetStatus = getTargetedInProgressStatus();
 
     fetchTask(clickUpTaskId)
       .then(async (task) => {
@@ -203,8 +206,8 @@ function ClickUpStatusUpdater() {
   function updateTaskAsReleased() {
     eventPayload.commits.forEach((commit) => {
       if (containsClikUpTagId(commit.message)) {
-        const taskId = getClickUpTaskIdFromTitle(commit.message);
-        fetchTask(taskId, true)
+        const clickUpTaskId = getClickUpTaskIdFromTitle(commit.message);
+        fetchTask(clickUpTaskId, true)
           .then(async (task) => {
             if (!task) return;
 
