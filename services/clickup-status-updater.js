@@ -111,7 +111,7 @@ function isPushEvent(eventPayload) {
     ** eventPayload.commits.length;
 }
 
-function containsClikUpTagId(title) {
+function containsClickUpTagId(title) {
   return /\(CU-\w{6,}\)/gm.test(title);
 }
 
@@ -199,7 +199,7 @@ function updateTaskInProgressStatus(eventPayload) {
 
 function updateTaskAsReleased(eventPayload) {
   eventPayload.commits.forEach((commit) => {
-    if (containsClikUpTagId(commit.message)) {
+    if (containsClickUpTagId(commit.message)) {
       const clickUpTaskId = getClickUpTaskIdFromTitle(commit.message);
       fetchTask(clickUpTaskId, true)
         .then(async (task) => {
@@ -231,7 +231,7 @@ function ClickUpStatusUpdater() {
   const eventPayload = JSON.parse(file);
 
   this.handleEvent = () => {
-    if (isPullRequestEvent(eventPayload) && containsClikUpTagId(eventPayload.pull_request.title)) {
+    if (isPullRequestEvent(eventPayload) && containsClickUpTagId(eventPayload.pull_request.title)) {
       updateTaskInProgressStatus(eventPayload);
     } else if (isPushEvent(eventPayload)) {
       updateTaskAsReleased(eventPayload);
