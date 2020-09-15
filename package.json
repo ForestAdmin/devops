@@ -7,7 +7,6 @@
     "lint": "./node_modules/eslint/bin/eslint.js ./*.js scripts services test",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "readme:update-coverage": "yarn test:coverage && node ./scripts/badge-coverage-updater.js",
     "updateClickupStatus": "node scripts/update-clickup-status.js"
   },
   "repository": {
