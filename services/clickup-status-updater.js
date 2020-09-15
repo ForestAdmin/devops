@@ -157,75 +157,82 @@ function ClickUpStatusUpdater() {
     return lowestPriorityStatus;
   }
 
-  this.handleEvent = () => {
-    if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)) {
-      const clickUpTaskId = getClickUpTaskIdFromTitle(eventPayload.pull_request.title);
+  function updateTaskInProgressStatus() {
+    const clickUpTaskId = getClickUpTaskIdFromTitle(eventPayload.pull_request.title);
 
-      let targetStatus = DOING_STATUS;
-      if (isWaitingForReview()) {
-        targetStatus = WAITING_FOR_REVIEW_STATUS;
+    let targetStatus = DOING_STATUS;
+    if (isWaitingForReview()) {
+      targetStatus = WAITING_FOR_REVIEW_STATUS;
 
-        if (isInCodeReview()) {
-          targetStatus = IN_CODE_REVIEW_STATUS;
-        }
+      if (isInCodeReview()) {
+        targetStatus = IN_CODE_REVIEW_STATUS;
       }
+    }
 
-      if (isApproved()) {
-        targetStatus = TO_RELEASE_STATUS;
-      }
+    if (isApproved()) {
+      targetStatus = TO_RELEASE_STATUS;
+    }
 
+    fetchTask(clickUpTaskId)
+      .then(async (task) => {
+        if (!task) return;
 
-      fetchTask(clickUpTaskId)
-        .then(async (task) => {
-          if (!task) return;
+        const wasUpdated = await updateStatusIfNecessary(
+          clickUpTaskId,
+          task.status.status,
+          targetStatus,
+        );
+        if (wasUpdated && task.parent) {
+          // NOTICE: If all subtask are in a process further than the parent task
+          //         the parent task should be at least at the same status as the lowest
+          //         status of the subtasks.
+          const parentTask = await fetchTask(task.parent, true);
 
-          const wasUpdated = await updateStatusIfNecessary(
-            clickUpTaskId,
-            task.status.status,
-            targetStatus,
-          );
-          if (wasUpdated && task.parent) {
-            // NOTICE: If all subtask are in a process further than the parent task
-            //         the parent task should be at least at the same status as the lowest
-            //         status of the subtasks.
-            const parentTask = await fetchTask(task.parent, true);
-
-            if (parentTask.substasks) {
-              const minimumChildStatus = getLowestPriorityStatus(parentTask.substasks);
-              await updateStatusIfNecessary(
-                parentTask.id,
-                parentTask.status.status,
-                minimumChildStatus,
-              );
-            }
+          if (parentTask.substasks) {
+            const minimumChildStatus = getLowestPriorityStatus(parentTask.substasks);
+            await updateStatusIfNecessary(
+              parentTask.id,
+              parentTask.status.status,
+              minimumChildStatus,
+            );
           }
-        });
-    } else if (isPushEvent()) {
-      eventPayload.commits.forEach((commit) => {
-        if (containsClikUpTagId(commit.message)) {
-          const taskId = getClickUpTaskIdFromTitle(commit.message);
-          fetchTask(taskId, true)
-            .then(async (task) => {
-              if (!task) return;
-
-              await updateStatusIfNecessary(
-                task.id,
-                task.status.status,
-                RELEASED_STATUS,
-              );
-
-              if (task.substasks) {
-                task.subtrasks.forEach((subtask) => {
-                  updateStatusIfNecessary(
-                    subtask.id,
-                    subtask.status.status,
-                    RELEASED_STATUS,
-                  );
-                });
-              }
-            });
         }
       });
+  }
+
+  function updateTaskAsReleased() {
+    eventPayload.commits.forEach((commit) => {
+      if (containsClikUpTagId(commit.message)) {
+        const taskId = getClickUpTaskIdFromTitle(commit.message);
+        fetchTask(taskId, true)
+          .then(async (task) => {
+            if (!task) return;
+
+            await updateStatusIfNecessary(
+              task.id,
+              task.status.status,
+              RELEASED_STATUS,
+            );
+
+            if (task.substasks) {
+              task.subtrasks.forEach((subtask) => {
+                updateStatusIfNecessary(
+                  subtask.id,
+                  subtask.status.status,
+                  RELEASED_STATUS,
+                );
+              });
+            }
+          });
+      }
+    });
+  }
+
+  this.handleEvent = () => {
+    if (isPullRequestEvent() && containsClikUpTagId(eventPayload.pull_request.title)) {
+      updateTaskInProgressStatus();
+    } else if (isPushEvent()) {
+      updateTaskAsReleased();
     }
   };
 }

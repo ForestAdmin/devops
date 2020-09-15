@@ -4,7 +4,13 @@ module.exports = {
     es6: true,
     mocha: true,
   },
-  extends: 'airbnb-base',
+  plugins: [
+    'sonarjs',
+  ],
+  extends: [
+    'airbnb-base',
+    'plugin:sonarjs/recommended',
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
