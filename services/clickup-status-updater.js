@@ -108,7 +108,7 @@ function isPushEvent(eventPayload) {
   return !isPullRequestEvent(eventPayload)
     && eventPayload
     && eventPayload.pusher
-    ** eventPayload.commits.length;
+    && eventPayload.commits.length;
 }
 
 function containsClickUpTagId(title) {
@@ -170,7 +170,7 @@ function updateTaskInProgressStatus(eventPayload) {
   const clickUpTaskId = getClickUpTaskIdFromTitle(eventPayload.pull_request.title);
   const targetStatus = getTargetedInProgressStatus(eventPayload);
 
-  fetchTask(clickUpTaskId)
+  return fetchTask(clickUpTaskId)
     .then(async (task) => {
       if (!task) return;
 
@@ -197,11 +197,11 @@ function updateTaskInProgressStatus(eventPayload) {
     });
 }
 
-function updateTaskAsReleased(eventPayload) {
-  eventPayload.commits.forEach((commit) => {
+async function updateTaskAsReleased(eventPayload) {
+  await eventPayload.commits.forEach(async (commit) => {
     if (containsClickUpTagId(commit.message)) {
       const clickUpTaskId = getClickUpTaskIdFromTitle(commit.message);
-      fetchTask(clickUpTaskId, true)
+      await fetchTask(clickUpTaskId, true)
         .then(async (task) => {
           if (!task) return;
 
@@ -230,11 +230,11 @@ function ClickUpStatusUpdater() {
   const file = fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8');
   const eventPayload = JSON.parse(file);
 
-  this.handleEvent = () => {
+  this.handleEvent = async () => {
     if (isPullRequestEvent(eventPayload) && containsClickUpTagId(eventPayload.pull_request.title)) {
-      updateTaskInProgressStatus(eventPayload);
+      await updateTaskInProgressStatus(eventPayload);
     } else if (isPushEvent(eventPayload)) {
-      updateTaskAsReleased(eventPayload);
+      await updateTaskAsReleased(eventPayload);
     }
   };
 }
