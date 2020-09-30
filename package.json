@@ -43,6 +43,7 @@
     "husky": "4.2.4",
     "jest": "26.4.2",
     "mock-fs": "4.10.1",
+    "nock": "13.0.4",
     "semantic-release": "17.0.7",
     "semantic-release-slack-bot": "1.6.2"
   }
