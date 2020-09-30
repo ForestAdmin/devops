@@ -1,3 +1,11 @@
+## [3.0.3](https://github.com/ForestAdmin/automatic-release-note/compare/v3.0.2...v3.0.3) (2020-09-30)
+
+
+### Bug Fixes
+
+* **vulnerabilities:** patch low vulnerabilities on dev dependencies ([#33](https://github.com/ForestAdmin/automatic-release-note/issues/33)) ([d5e32ec](https://github.com/ForestAdmin/automatic-release-note/commit/d5e32ec669dfc9c1162075362c6765101b383b7e))
+* **vulnerability:** get rid of node-fetch dependency vulnerability ([#32](https://github.com/ForestAdmin/automatic-release-note/issues/32)) ([fec200e](https://github.com/ForestAdmin/automatic-release-note/commit/fec200e6b6acd3f7325473f8b0b9d00a92f33cb5))
+
 ## [3.0.2](https://github.com/ForestAdmin/automatic-release-note/compare/v3.0.1...v3.0.2) (2020-07-13)
 
 
