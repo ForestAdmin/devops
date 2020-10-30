@@ -42,5 +42,6 @@ module.exports = {
         packageName: '@forestadmin/devops',
       }
     ],
+    'semantic-release-npm-deprecate-old-versions'
   ],
 }
