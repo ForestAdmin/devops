@@ -7013,7 +7013,7 @@ saxes@^5.0.0:
   dependencies:
     xmlchars "^2.2.0"
 
-semantic-release-npm-deprecate-old-versions@^1.0.1:
+semantic-release-npm-deprecate-old-versions@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/semantic-release-npm-deprecate-old-versions/-/semantic-release-npm-deprecate-old-versions-1.0.1.tgz#4baec4963102e49594a37e667ec9a17c8db1a3fb"
   integrity sha512-melRhWwNRn2wn9H6RXeoFTonzqZmteFnKg8JKvfAYXPBYiKiItrFiLWUDDg7WqzV4qVgXRlsVPZiCil2OtDGaw==
