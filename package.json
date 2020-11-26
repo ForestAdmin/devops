@@ -44,7 +44,7 @@
     "jest": "26.4.2",
     "mock-fs": "4.10.1",
     "nock": "13.0.4",
-    "semantic-release": "17.1.2",
+    "semantic-release": "17.2.3",
     "semantic-release-npm-deprecate-old-versions": "1.0.1",
     "semantic-release-slack-bot": "1.6.2"
   }
