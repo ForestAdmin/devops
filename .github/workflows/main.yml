@@ -4,7 +4,7 @@ on:
   pull_request_review:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   update_clickup_status:
